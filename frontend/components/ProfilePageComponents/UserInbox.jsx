@@ -28,7 +28,9 @@ const UserInboxPage = () => {
   const socketId = useRef();
 
   useEffect(() => {
-    socketId.current = io("http://localhost:5000", { transports: ["websocket"] });
+     socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "https://halfattire-socket.onrender.com", {
+    transports: ["websocket"],
+  });
 
     socketId.current.on("getMessage", (data) => {
       setArrivalMessage({
