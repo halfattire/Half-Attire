@@ -48,7 +48,9 @@ function DashBoardHeader() {
             <Image
               src={
                 seller.avatar
-                  ? `${backend_url}/${seller.avatar}`
+                  ? seller.avatar.startsWith("http") 
+                    ? seller.avatar 
+                    : `${backend_url}/${seller.avatar}`
                   : "/assets/fallback-avatar.png"
               }
               className="h-10 w-10 rounded-full object-cover object-top"

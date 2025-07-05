@@ -15,16 +15,16 @@ import {
   getAllProductsSuccess,
 } from "../reducers/product";
 
-export const createProduct = (formData) => async (dispatch) => {
+export const createProduct = (productData) => async (dispatch) => {
   try {
     dispatch(createProductRequest());
 
     const { data } = await axios.post(
       `${server}/product/create-product`,
-      formData,
+      productData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       },

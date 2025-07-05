@@ -52,6 +52,16 @@ function CreateProduct() {
     setImages(Array.from(e.target.files))
   }
 
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
   // Variation handlers - minimal addition
   const handleVariationChange = (id, field, value) => {
     setVariations(variations.map((v) => (v.id === id ? { ...v, [field]: value } : v)))
@@ -76,35 +86,44 @@ function CreateProduct() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
 
-    const newForm = new FormData()
-    images.forEach((image) => {
-      newForm.append("images", image)
-    })
-    newForm.append("name", name)
-    newForm.append("description", description)
-    newForm.append("category", category)
-    newForm.append("tags", tags)
-    newForm.append("shopId", seller._id)
+    try {
+      // Convert images to base64
+      const imagePromises = images.map(image => convertToBase64(image))
+      const imageBase64Array = await Promise.all(imagePromises)
 
-    if (isVariableProduct) {
-      newForm.append("isVariableProduct", "true")
-      newForm.append("variations", JSON.stringify(variations))
-      // For variable products, use dummy values for required fields
-      newForm.append("originalPrice", "0")
-      newForm.append("discountPrice", "0")
-      newForm.append("stock", "0")
-    } else {
-      newForm.append("isVariableProduct", "false")
-      newForm.append("originalPrice", originalPrice)
-      newForm.append("discountPrice", discountPrice)
-      newForm.append("stock", stock)
+      const productData = {
+        name,
+        description,
+        category,
+        tags,
+        shopId: seller._id,
+        images: imageBase64Array,
+      }
+
+      if (isVariableProduct) {
+        productData.isVariableProduct = "true"
+        productData.variations = JSON.stringify(variations)
+        // For variable products, use dummy values for required fields
+        productData.originalPrice = "0"
+        productData.discountPrice = "0"
+        productData.stock = "0"
+      } else {
+        productData.isVariableProduct = "false"
+        productData.originalPrice = originalPrice
+        productData.discountPrice = discountPrice
+        productData.stock = stock
+      }
+
+      dispatch(createProduct(productData))
+    } catch (error) {
+      console.error('Error converting images to base64:', error)
+      toast.error('Failed to process images')
+      setIsLoading(false)
     }
-
-    dispatch(createProduct(newForm))
   }
 
   return (

@@ -40,15 +40,43 @@ function Register() {
     try {
       setGoogleLoading(true)
 
-      const result = await signInWithPopup(auth, googleProvider)
+      // Try popup first, fallback to redirect if needed
+      let result;
+      try {
+        result = await signInWithPopup(auth, googleProvider)
+      } catch (popupError) {
+        console.log("Popup failed, trying redirect method:", popupError)
+        // If popup fails, you could implement redirect method here
+        throw popupError
+      }
+      
+      // Debug: Check what we get from Firebase
+      console.log("Firebase result:", result.user)
+      console.log("User email:", result.user.email)
+      console.log("User displayName:", result.user.displayName)
+      console.log("User photoURL:", result.user.photoURL)
+      console.log("User emailVerified:", result.user.emailVerified)
+      console.log("User providerData:", result.user.providerData)
+
+      // Ensure we have email from the user object
+      const userEmail = result.user.email || result.user.providerData?.[0]?.email
+      const userName = result.user.displayName || result.user.providerData?.[0]?.displayName
+      const userPhoto = result.user.photoURL || result.user.providerData?.[0]?.photoURL
 
       const userData = {
-        name: result.user.displayName,
-        email: result.user.email,
-        photo: result.user.photoURL,
+        name: userName || userEmail?.split("@")[0] || "User",
+        email: userEmail,
+        photo: userPhoto,
       }
 
-      console.log("Firebase auth successful:", userData.email)
+      // Debug: Check what we're sending
+      console.log("Sending userData:", userData)
+
+      if (!userData.email) {
+        console.error("No email found in user data")
+        toast.error("Unable to get email from Google account. Please try again or use a different account.")
+        return
+      }
 
       const res = await axios.post(`${server}/user/google`, userData, {
         withCredentials: true,
@@ -56,6 +84,8 @@ function Register() {
           "Content-Type": "application/json",
         },
       })
+
+      console.log("Server response:", res.data)
 
       if (res.data.success) {
         localStorage.setItem("userData", JSON.stringify(res.data.user))
@@ -70,10 +100,13 @@ function Register() {
 
       if (error.code === "auth/popup-closed-by-user") {
         toast.info("Sign-in cancelled")
+      } else if (error.code === "auth/popup-blocked") {
+        toast.error("Popup blocked. Please allow popups for this site and try again.")
       } else if (error.response) {
+        console.error("Server response:", error.response.data)
         toast.error(error.response.data?.message || "Server error")
       } else {
-        toast.error("Google sign-in failed")
+        toast.error("Google sign-in failed. Please try again.")
       }
     } finally {
       setGoogleLoading(false)

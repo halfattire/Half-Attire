@@ -68,25 +68,43 @@ function CreateEvent() {
     setImages(Array.from(e.target.files));
   };
 
-  const handleSubmit = (e) => {
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newForm = new FormData();
-    images.forEach((image) => {
-      newForm.append("images", image);
-    });
-    newForm.append("name", name);
-    newForm.append("description", description);
-    newForm.append("category", category);
-    newForm.append("tags", tags);
-    newForm.append("originalPrice", originalPrice);
-    newForm.append("discountPrice", discountPrice);
-    newForm.append("stock", stock);
-    newForm.append("shopId", seller._id);
-    newForm.append("start_Date", startDate);
-    newForm.append("Finish_Date", endDate);
+    try {
+      // Convert images to base64
+      const imagePromises = images.map(image => convertToBase64(image))
+      const imageBase64Array = await Promise.all(imagePromises)
 
-    dispatch(createEvent(newForm));
+      const eventData = {
+        name,
+        description,
+        category,
+        tags,
+        originalPrice,
+        discountPrice,
+        stock,
+        shopId: seller._id,
+        start_Date: startDate,
+        Finish_Date: endDate,
+        images: imageBase64Array,
+      }
+
+      dispatch(createEvent(eventData));
+    } catch (error) {
+      console.error('Error converting images to base64:', error)
+      toast.error('Failed to process images')
+    }
   };
 
   return (

@@ -62,7 +62,17 @@ function SingleCart({ data, quantityChangeHandler, removeFromCartHandler }) {
           </div>
         </div>
         <div className="min-w-[70px]">
-          <img src={`${backend_url}/${data.images[0]}`} className="h-20 w-20 object-contain" alt={data.name} />
+          <img 
+            src={
+              data.images && data.images.length > 0
+                ? data.images[0].startsWith('http') 
+                  ? data.images[0] 
+                  : `${backend_url}/${data.images[0]}`
+                : "https://cdn-icons-png.flaticon.com/128/44/44289.png"
+            } 
+            className="h-20 w-20 object-contain" 
+            alt={data.name} 
+          />
         </div>
         <div className="w-full">
           <h2 className="font-semibold">{data.name}</h2>

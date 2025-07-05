@@ -82,7 +82,9 @@ function ShopInfo({ isOwner }) {
             <Image
               src={
                 data.avatar
-                  ? `${backend_url}/${data.avatar}`
+                  ? data.avatar.startsWith("http") 
+                    ? data.avatar 
+                    : `${backend_url}/${data.avatar}`
                   : "/assets/placeholder.png"
               }
               alt="Seller Avatar"

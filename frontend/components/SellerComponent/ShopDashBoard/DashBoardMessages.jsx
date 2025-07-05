@@ -276,7 +276,9 @@ function MessageList({
         {seller?.avatar ? (
           <Image
             className="h-12 w-12 flex-shrink-0 rounded-full"
-            src={`${backend_url}/${seller.avatar}`}
+            src={seller.avatar.startsWith("http") 
+              ? seller.avatar 
+              : `${backend_url}/${seller.avatar}`}
             alt="Seller Avatar"
             width={48}
             height={48}
@@ -323,7 +325,9 @@ function SellerInbox({
         <div className="flex items-center">
           {seller?.avatar ? (
             <Image
-              src={`${backend_url}/${seller.avatar}`}
+              src={seller.avatar.startsWith("http") 
+                ? seller.avatar 
+                : `${backend_url}/${seller.avatar}`}
               className="h-12 w-12 rounded-full"
               alt="Seller Avatar"
               width={48}

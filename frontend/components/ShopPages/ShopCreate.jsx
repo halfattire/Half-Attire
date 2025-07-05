@@ -111,7 +111,17 @@ function ShopCreate() {
     }
   }, [isSeller, router, user])
 
-  const handleFileInputChange = (e) => {
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
+  const handleFileInputChange = async (e) => {
     const file = e.target.files[0]
     if (file) {
       setAvatar(file)
@@ -127,37 +137,35 @@ function ShopCreate() {
     e.preventDefault()
     setLoading(true)
 
-    const formData = new FormData()
-    formData.append("name", name)
-    formData.append("email", email)
-    formData.append("password", password)
-    formData.append("zipCode", zipCode)
-    formData.append("phoneNumber", phoneNumber)
-    formData.append("address", address)
-    if (avatar) {
-      formData.append("file", avatar)
-    }
-
     try {
+      let avatarBase64 = null
+      if (avatar) {
+        avatarBase64 = await convertToBase64(avatar)
+      }
+
+      const shopData = {
+        name,
+        email,
+        password,
+        zipCode,
+        phoneNumber,
+        address,
+        avatar: avatarBase64,
+      }
+
       // Get the token from cookies or localStorage
       const token = localStorage.getItem("token")
 
       const config = {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           // Include token in Authorization header as fallback
           ...(token && { Authorization: `Bearer ${token}` }),
         },
         withCredentials: true,
       }
 
-      // console.log("Submitting shop creation with config:", {
-      //   url: `${server}/shop/create-shop`,
-      //   withCredentials: config.withCredentials,
-      //   hasAuthHeader: !!config.headers.Authorization,
-      // })
-
-      const response = await axios.post(`${server}/shop/create-shop`, formData, config)
+      const response = await axios.post(`${server}/shop/create-shop`, shopData, config)
 
       if (response.data.success) {
         toast.success(response.data.message)

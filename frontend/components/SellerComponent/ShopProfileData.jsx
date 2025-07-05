@@ -126,7 +126,9 @@ function ShopProfileData({ isOwner }) {
                 <Image
                   src={
                     item.user.avatar
-                      ? `${backend_url}/${item.user.avatar}`
+                      ? item.user.avatar.startsWith("http") 
+                        ? item.user.avatar 
+                        : `${backend_url}/${item.user.avatar}`
                       : "https://cdn-icons-png.flaticon.com/128/9131/9131529.png"
                   }
                   className="h-10 w-10 rounded-full"

@@ -145,7 +145,11 @@ function OrderDetails() {
             >
               <div className="flex items-center justify-center bg-gray-50 rounded-md p-2">
                 <Image
-                  src={item.images[0] ? `${backend_url}/${item.images[0]}` : "/assets/fallback-image.png"}
+                  src={item.images[0] 
+                    ? item.images[0].startsWith("http") 
+                      ? item.images[0] 
+                      : `${backend_url}/${item.images[0]}`
+                    : "/assets/fallback-image.png"}
                   className="h-20 w-20 object-contain"
                   alt={item.name || "Product"}
                   width={80}

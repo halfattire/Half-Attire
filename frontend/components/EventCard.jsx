@@ -15,7 +15,9 @@ function EventCard({ data }) {
           className="w-full max-w-sm object-contain lg:w-[80%]"
           src={
             data?.images && data.images.length > 0
-              ? `${backend_url}/${data.images[0]}`
+              ? data.images[0].startsWith('http') 
+                ? data.images[0] 
+                : `${backend_url}/${data.images[0]}`
               : "/assets/placeholder.png"
           }
           alt={data?.name || "Event Image"}

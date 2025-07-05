@@ -91,7 +91,9 @@ function ProductCard({ data, isEvent }) {
           <Image
             src={
               data.images && data.images.length > 0
-                ? `${backend_url}/${data.images[0]}`
+                ? data.images[0].startsWith('http') 
+                  ? data.images[0] 
+                  : `${backend_url}/${data.images[0]}`
                 : "https://cdn-icons-png.flaticon.com/128/44/44289.png"
             }
             alt={data.name}

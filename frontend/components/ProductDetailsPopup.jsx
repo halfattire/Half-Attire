@@ -150,12 +150,26 @@ function ProductDetailsPopup({ setOpen, data }) {
               {/* left */}
               <div className="w-full md:w-1/2">
                 <div className="my-4 flex items-center justify-center">
-                  <img src={`${backend_url}/${data.images[0]}`} className="w-60" alt={data.name} />
+                  <img 
+                    src={
+                      data.images && data.images.length > 0
+                        ? data.images[0].startsWith('http') 
+                          ? data.images[0] 
+                          : `${backend_url}/${data.images[0]}`
+                        : "https://cdn-icons-png.flaticon.com/128/44/44289.png"
+                    } 
+                    className="w-60" 
+                    alt={data.name} 
+                  />
                 </div>
                 {/* <div className="flex items-center gap-2">
                   <div>
                     <img
-                      src={`${backend_url}/${data?.shop?.avatar}`}
+                      src={data?.shop?.avatar 
+                        ? data.shop.avatar.startsWith("http") 
+                          ? data.shop.avatar 
+                          : `${backend_url}/${data.shop.avatar}` 
+                        : "/assets/placeholder.png"}
                       className="h-12 w-12 rounded-full"
                       alt={data.shop?.name}
                     />

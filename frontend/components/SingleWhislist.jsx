@@ -36,7 +36,17 @@ function SingleWhislist({ data, removeFromWishlistHandler, handleAddToCart }) {
           <IoClose />
         </div>
         <div className="min-w-20">
-          <img src={`${backend_url}/${data.images[0]}`} className="h-20 w-20 object-contain" alt="" />
+          <img 
+            src={
+              data.images && data.images.length > 0
+                ? data.images[0].startsWith('http') 
+                  ? data.images[0] 
+                  : `${backend_url}/${data.images[0]}`
+                : "https://cdn-icons-png.flaticon.com/128/44/44289.png"
+            } 
+            className="h-20 w-20 object-contain" 
+            alt="" 
+          />
         </div>
         <div className="flex w-full items-center justify-between gap-3">
           <div>

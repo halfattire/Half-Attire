@@ -19,16 +19,16 @@ import {
 } from "../reducers/event";
 
 // Create event (Seller functionality)
-export const createEvent = (formData) => async (dispatch) => {
+export const createEvent = (eventData) => async (dispatch) => {
   try {
     dispatch(createEventRequest());
 
     const { data } = await axios.post(
       `${server}/event/create-event`,
-      formData,
+      eventData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       },

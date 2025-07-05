@@ -239,7 +239,11 @@ const MessageList = ({
     >
       <div className="relative">
         <img
-          src={`${backend_url}/${user?.avatar}`}
+          src={user?.avatar 
+            ? user.avatar.startsWith("http") 
+              ? user.avatar 
+              : `${backend_url}/${user.avatar}` 
+            : "/assets/fallback-avatar.png"}
           alt=""
           className="w-[50px] h-[50px] rounded-full"
         />
@@ -280,7 +284,11 @@ const SellerInbox = ({
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
-            src={`${backend_url}/${userData?.avatar}`}
+            src={userData?.avatar 
+              ? userData.avatar.startsWith("http") 
+                ? userData.avatar 
+                : `${backend_url}/${userData.avatar}` 
+              : "/assets/fallback-avatar.png"}
             alt=""
             className="w-[60px] h-[60px] rounded-full"
           />
@@ -305,7 +313,9 @@ const SellerInbox = ({
           <Image
             src={
               userData?.avatar
-                ? `${backend_url}${userData.avatar}`
+                ? userData.avatar.startsWith("http")
+                  ? userData.avatar
+                  : `${backend_url}/${userData.avatar}`
                 : "/assets/fallback-avatar.png"
             }
             alt="User Avatar"
@@ -328,7 +338,11 @@ const SellerInbox = ({
             >
               {item.sender !== sellerId && (
                 <img
-                  src={`${backend_url}/${userData?.avatar}`}
+                  src={userData?.avatar 
+                    ? userData.avatar.startsWith("http") 
+                      ? userData.avatar 
+                      : `${backend_url}/${userData.avatar}` 
+                    : "/assets/fallback-avatar.png"}
                   className="w-[40px] h-[40px] rounded-full mr-3"
                   alt=""
                 />

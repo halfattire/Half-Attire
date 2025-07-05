@@ -19,18 +19,27 @@ function ShopSetting() {
   const [phoneNumber, setPhoneNumber] = useState(seller?.phoneNumber || "");
   const [zipCode, setZipCode] = useState(seller?.zipCode || ""); // Fixed typo in setZipcode
 
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
   const handleImage = async (e) => {
     e.preventDefault();
     const file = e.target.files[0];
     setAvatar(file);
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      await axios.put(`${server}/shop/update-shop-avatar`, formData, {
+      const base64 = await convertToBase64(file);
+
+      await axios.put(`${server}/shop/update-shop-avatar`, { avatar: base64 }, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       });
@@ -75,7 +84,9 @@ function ShopSetting() {
                 avatar
                   ? URL.createObjectURL(avatar)
                   : seller?.avatar
-                  ? `${backend_url}/${seller.avatar}`
+                  ? seller.avatar.startsWith("http") 
+                    ? seller.avatar 
+                    : `${backend_url}/${seller.avatar}`
                   : "/fallback-avatar.png" // Fallback image
               }
               alt="Shop Avatar"

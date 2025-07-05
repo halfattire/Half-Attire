@@ -204,7 +204,13 @@ function ProductDetail({ data }) {
               <div className="flex w-full flex-col items-center md:w-1/2">
                 <div className="relative mb-4 h-[350px] w-[80%]">
                   <Image
-                    src={images && images.length > 0 ? `${backend_url}/${images[select]}` : "/assets/placeholder.png"}
+                    src={
+                      images && images.length > 0 
+                        ? images[select].startsWith('http') 
+                          ? images[select] 
+                          : `${backend_url}/${images[select]}`
+                        : "/assets/placeholder.png"
+                    }
                     className="object-contain"
                     alt={name || "Product Image"}
                     fill
@@ -217,7 +223,11 @@ function ProductDetail({ data }) {
                       <div key={index} className={`${select === index ? "border" : ""} cursor-pointer`}>
                         <div className="relative mr-3 mt-3 h-24 w-24 flex-shrink-0 overflow-hidden">
                           <Image
-                            src={`${backend_url}/${i}`}
+                            src={
+                              i.startsWith('http') 
+                                ? i 
+                                : `${backend_url}/${i}`
+                            }
                             alt={`Thumbnail ${index + 1}`}
                             className="object-contain"
                             fill
@@ -377,7 +387,11 @@ function ProductDetail({ data }) {
                   {/* <div className="flex items-center gap-2">
                     <div className="relative h-12 w-12 rounded-full overflow-hidden">
                       <Image
-                        src={shop?.avatar ? `${backend_url}/${shop.avatar}` : "/assets/placeholder.png"}
+                        src={shop?.avatar 
+                          ? shop.avatar.startsWith("http") 
+                            ? shop.avatar 
+                            : `${backend_url}/${shop.avatar}` 
+                          : "/assets/placeholder.png"}
                         className="rounded-full"
                         alt={shop?.name || "Shop Avatar"}
                         fill

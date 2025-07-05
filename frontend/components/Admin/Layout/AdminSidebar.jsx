@@ -32,24 +32,24 @@ const AdminSidebar = () => {
       icon: HiOutlineUserGroup,
       path: "/admin/sellers",
     },
-    // {
-    //   id: 4,
-    //   title: "All Users",
-    //   icon: GrWorkshop,
-    //   path: "/admin/users",
-    // },
-    // {
-    //   id: 5,
-    //   title: "All Products",
-    //   icon: FaProductHunt,
-    //   path: "/admin/products",
-    // },
-    // {
-    //   id: 6,
-    //   title: "All Events",
-    //   icon: MdEmojiEvents,
-    //   path: "/admin/events",
-    // },
+    {
+      id: 4,
+      title: "All Users",
+      icon: GrWorkshop,
+      path: "/admin/users",
+    },
+    {
+      id: 5,
+      title: "All Products",
+      icon: FaProductHunt,
+      path: "/admin/products",
+    },
+    {
+      id: 6,
+      title: "All Events",
+      icon: MdEmojiEvents,
+      path: "/admin/events",
+    },
     // {
     //   id: 7,
     //   title: "Withdraw Requests",
