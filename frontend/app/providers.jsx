@@ -5,6 +5,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "../redux/store";
 import store from "../redux/store";
 import { loadSeller, loadUser } from "@/redux/actions/user";
+import { loadUserSuccess } from "@/redux/reducers/user";
+import { initializeAuth } from "@/lib/auth-persistence";
 import { getAllProducts } from "@/redux/actions/product";
 import { getAllEvents } from "@/redux/actions/event";
 import { useEffect, useState } from "react";
@@ -29,10 +31,30 @@ export function Providers({ children }) {
   }
 
   useEffect(() => {
-    store.dispatch(loadUser());
-    store.dispatch(loadSeller());
-    store.dispatch(getAllProducts());
-    store.dispatch(getAllEvents());
+    // Load initial data and authenticate user
+    const initializeApp = async () => {
+      try {
+        // Initialize authentication from persisted state
+        const userData = initializeAuth();
+        
+        if (userData) {
+          // Load user data into Redux if found in storage
+          store.dispatch(loadUserSuccess(userData));
+        } else {
+          // Try to load user from backend if no local data
+          store.dispatch(loadUser());
+        }
+        
+        // Load application data
+        store.dispatch(getAllProducts());
+        store.dispatch(getAllEvents());
+        
+      } catch (error) {
+        // Error initializing app
+      }
+    };
+
+    initializeApp();
     getStripeApiKey();
   }, []);
 

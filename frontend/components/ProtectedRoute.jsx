@@ -1,56 +1,64 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useRouter } from "next/navigation"
 import { loadUserSuccess } from "@/redux/reducers/user"
+import { getAuthFromStorage, clearAuthFromStorage } from "@/lib/auth-persistence"
 import Cookies from "js-cookie"
-
 
 export default function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const router = useRouter();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !loading) {
-      const token = localStorage.getItem("token") || Cookies.get("token");
-      const userData = localStorage.getItem("userData") || Cookies.get("userData");
+    const initializeAuth = () => {
+      // Check if we're in the browser
+      if (typeof window === 'undefined') return;
+      
+      // Try to get authentication data using the persistence service
+      const authData = getAuthFromStorage();
 
-      if (token && userData) {
-        try {
-          const parsedUserData = JSON.parse(userData);
-          dispatch(loadUserSuccess(parsedUserData));
-          return;
-        } catch (error) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("userData");
-          Cookies.remove("token");
-          Cookies.remove("userData");
-        }
+      if (authData && !isAuthenticated) {
+        // Load user data into Redux
+        dispatch(loadUserSuccess(authData.userData));
+        setIsInitialized(true);
+        return;
       }
 
-      router.push("/login");
-    }
-  }, [loading, isAuthenticated, router, dispatch]);
+      // If no valid authentication data found and not already authenticated
+      if (!isAuthenticated && !loading) {
+        setIsInitialized(true);
+        // Small delay to prevent immediate redirect on page load
+        setTimeout(() => {
+          router.push("/login");
+        }, 100);
+      } else {
+        setIsInitialized(true);
+      }
+    };
 
-  if (loading)
+    initializeAuth();
+  }, [isAuthenticated, loading, dispatch, router]);
+
+  // Show loading while initializing
+  if (!isInitialized || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
+  }
 
+  // If not authenticated after initialization, show nothing (redirect will happen)
   if (!isAuthenticated) {
-    const token = localStorage.getItem("token") || Cookies.get("token");
-    if (token) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      );
-    }
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   return children;

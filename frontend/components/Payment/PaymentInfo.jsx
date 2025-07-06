@@ -1,12 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-function PaymentInfo({
+const PaymentInfo = ({
   user,
   open,
   setOpen,
   adminCardPaymentHandler,
   cashOnDeliveryHandler,
-}) {
+}) => {
   const [select, setSelect] = useState(1);
 
   return (
@@ -119,6 +119,6 @@ function PaymentInfo({
       </div>
     </div>
   );
-}
+};
 
 export default PaymentInfo;

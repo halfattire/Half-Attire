@@ -3,6 +3,7 @@ import { auth, googleProvider } from "@/lib/firebase";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { server } from "@/lib/server";
 import { toast } from "react-toastify";
+import { clearAuthFromStorage } from "./auth-persistence";
 
 /**
  * Handle Google Sign In and authenticate with backend
@@ -69,13 +70,8 @@ export const logoutUser = async () => {
       // Continue even if backend logout fails
     }
 
-    // 3. Clear all local storage
-    localStorage.removeItem("userData");
-    localStorage.removeItem("rememberedEmail");
-    localStorage.removeItem("rememberedPassword");
-
-    // Clear any other auth-related items
-    localStorage.clear();
+    // 3. Clear all local storage using persistence service
+    clearAuthFromStorage();
 
     // Logout completed successfully
     toast.success("Logged out successfully");

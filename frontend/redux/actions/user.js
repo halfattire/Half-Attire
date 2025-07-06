@@ -1,6 +1,7 @@
 import axios from "axios";
 import { server } from "../../lib/server";
 import { logoutUser } from "../../lib/auth-service";
+import { setAuthToStorage, clearAuthFromStorage } from "../../lib/auth-persistence";
 import {
   loadUserRequest,
   loadUserSuccess,
@@ -28,18 +29,18 @@ export const loadUser = () => async (dispatch) => {
       withCredentials: true,
     });
 
-    // Store user data in localStorage
+    // Store user data using the persistence service
     if (data.user) {
-      localStorage.setItem("userData", JSON.stringify(data.user));
+      setAuthToStorage(data.token || localStorage.getItem("token"), data.user);
     }
 
     dispatch(loadUserSuccess(data.user));
   } catch (error) {
-    console.error("Load user error:", error);
+    // Error loading user
 
     // If we get 401, user is not authenticated - clear everything
     if (error.response?.status === 401) {
-      localStorage.removeItem("userData");
+      clearAuthFromStorage();
       dispatch(loadUserFail("Please login to continue"));
     } else {
       dispatch(loadUserFail(error.response?.data?.message || "Failed to load user"));

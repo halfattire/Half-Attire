@@ -1,4 +1,6 @@
-function PaymentCartData({ orderData }) {
+import React from "react";
+
+const PaymentCartData = ({ orderData }) => {
   return (
     <div className="w-full rounded-md bg-white p-6 shadow-sm md:mt-4 md:w-2/5">
       <div className="space-y-4">
@@ -29,6 +31,6 @@ function PaymentCartData({ orderData }) {
       </div>
     </div>
   );
-}
+};
 
 export default PaymentCartData;

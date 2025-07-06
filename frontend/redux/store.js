@@ -46,10 +46,12 @@ const rootReducer = combineReducers({
   orders: orderReducer, // Reverted to 'orders' to match original working state
 });
 
-// Persist config
+// Persist config with better production settings
 const persistConfig = {
   key: "root",
   storage, // Use the custom storage
+  whitelist: ['user', 'cart', 'wishlist'], // Only persist these reducers
+  timeout: 10000, // 10 second timeout for rehydration
 };
 
 // Persisted reducer
