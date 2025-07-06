@@ -22,7 +22,7 @@ const AdminOrderDetail = () => {
 
   useEffect(() => {
     if (orderId) {
-      console.log("🔍 Frontend: Fetching order with ID:", orderId);
+      // Frontend: Fetching order with ID
       fetchOrderDetails();
     }
   }, [orderId]);
@@ -33,13 +33,13 @@ const AdminOrderDetail = () => {
       setError(null);
 
       const url = `${server}/order/admin/order/${orderId}`;
-      console.log("📡 Frontend: Making request to:", url);
+      // Frontend: Making request to backend
 
       const { data } = await axios.get(url, {
         withCredentials: true,
       });
 
-      console.log("✅ Frontend: Response received:", data);
+      // Frontend: Response received
 
       if (data.success) {
         setOrder(data.order);
@@ -47,7 +47,7 @@ const AdminOrderDetail = () => {
         setError("Order not found");
       }
     } catch (error) {
-      console.error("❌ Frontend: Error fetching order details:", error);
+      // Frontend: Error fetching order details
       console.error("❌ Frontend: Error response:", error.response?.data);
       setError(error.response?.data?.message || "Failed to fetch order details");
     } finally {

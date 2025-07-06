@@ -5,7 +5,7 @@ import { server } from '../lib/server';
 import { toast } from 'react-hot-toast';
 import { FaEnvelope, FaCheckCircle, FaSpinner } from 'react-icons/fa';
 
-const NewsLetter = () => {
+const NewsLetter = () => {  
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -54,11 +54,11 @@ const NewsLetter = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-emerald-500 to-teal-600 py-12">
+    <div className="bg-gradient-to-r from-gray-50 to-gray-100 py-12">
       <div className="max-w-4xl mx-auto px-4 text-center">
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-200">
           <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-3 rounded-full">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-3 rounded-full">
               <FaEnvelope className="text-white text-2xl" />
             </div>
           </div>
@@ -74,19 +74,19 @@ const NewsLetter = () => {
 
           <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-gray-700">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-blue-600">✓</span>
               <span>Exclusive Discounts up to 50%</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-blue-600">✓</span>
               <span>Early Access to Sales</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-blue-600">✓</span>
               <span>New Product Alerts</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-blue-600">✓</span>
               <span>Special Birthday Offers</span>
             </div>
           </div>
@@ -99,13 +99,13 @@ const NewsLetter = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   disabled={isLoading}
                 />
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <>
@@ -120,12 +120,12 @@ const NewsLetter = () => {
             </form>
           ) : (
             <div className="max-w-md mx-auto">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 text-center">
-                <FaCheckCircle className="text-emerald-500 text-4xl mx-auto mb-3" />
-                <h3 className="text-xl font-semibold text-emerald-800 mb-2">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+                <FaCheckCircle className="text-green-500 text-4xl mx-auto mb-3" />
+                <h3 className="text-xl font-semibold text-green-800 mb-2">
                   Successfully Subscribed!
                 </h3>
-                <p className="text-emerald-700">
+                <p className="text-green-700">
                   Thank you for subscribing! Check your email for a welcome message with your exclusive discount code.
                 </p>
               </div>

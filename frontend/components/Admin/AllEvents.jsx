@@ -8,12 +8,14 @@ import { AiOutlineEye, AiOutlineDelete } from "react-icons/ai"
 import { MdRefresh } from "react-icons/md"
 import Link from "next/link"
 import { getAllEventsAdmin } from "@/redux/actions/event"
+import { server } from "@/lib/server"
 import Loader from "../../components/Loader"
 import { toast } from "react-toastify"
 
 const AllEvents = () => {
   const dispatch = useDispatch()
-  const { adminEvents = [], isLoading = false, error } = useSelector((state) => state.event || {})
+  const { adminEvents = [], isLoading = false, error } = useSelector((state) => state.events || {})
+  const { user } = useSelector((state) => state.user)
   const [lastRefresh, setLastRefresh] = useState(new Date())
 
   useEffect(() => {
@@ -119,20 +121,68 @@ const AllEvents = () => {
     },
   ]
 
-  const rows = adminEvents.map((event) => ({
-    id: event._id,
-    name: event.name,
-    shop: event.shop?.name || "Unknown Shop",
-    price: `PKR ${event.discountPrice}`,
-    stock: event.stock,
-    sold: event.sold_out || 0,
-    status:
-      new Date(event.start_Date) > new Date()
-        ? "Upcoming"
-        : new Date(event.finish_Date) < new Date()
-          ? "Ended"
-          : "Running",
-  }))
+  const rows = adminEvents.map((event) => {
+    const now = new Date();
+    const startDate = new Date(event.start_Date);
+    const finishDate = new Date(event.finish_Date);
+    
+    let status;
+    if (startDate > now) {
+      status = "Upcoming";
+    } else if (finishDate < now) {
+      status = "Ended";
+    } else {
+      status = "Running";
+    }
+    
+    // Extract shop name with comprehensive fallback logic
+    let shopName = "Unknown Shop";
+    
+    try {
+      // Priority 1: Check if shop object has name
+      if (event.shop && event.shop.name && event.shop.name.trim() !== "") {
+        shopName = event.shop.name;
+      }
+      // Priority 2: Check if shop is a string
+      else if (typeof event.shop === 'string' && event.shop.trim() !== "") {
+        shopName = event.shop;
+      }
+      // Priority 3: Check if shopId populated object has name (from MongoDB populate)
+      else if (event.shopId && typeof event.shopId === 'object' && event.shopId.name) {
+        shopName = event.shopId.name;
+      }
+      // Priority 4: Use shopId to create a display name
+      else if (event.shopId) {
+        const shopIdStr = typeof event.shopId === 'object' ? event.shopId.toString() : event.shopId;
+        shopName = `Shop ${shopIdStr.slice(-6)}`;
+      }
+      // Priority 5: Use shop._id to create a display name
+      else if (event.shop && event.shop._id) {
+        shopName = `Shop ${event.shop._id.toString().slice(-6)}`;
+      }
+      // Priority 6: Try to extract from any other available data
+      else {
+        if (event.shop && event.shop.email) {
+          shopName = `Shop (${event.shop.email.split('@')[0]})`;
+        } else if (event.shop && event.shop.address) {
+          shopName = `Shop (${event.shop.address.substring(0, 15)}...)`;
+        }
+      }
+    } catch (error) {
+      console.log(`Error processing shop name for event ${event._id}:`, error);
+      shopName = "Unknown Shop";
+    }
+    
+    return {
+      id: event._id,
+      name: event.name,
+      shop: shopName,
+      price: `PKR ${event.discountPrice}`,
+      stock: event.stock,
+      sold: event.sold_out || 0,
+      status: status,
+    };
+  })
 
   // Calculate statistics
   const totalEvents = adminEvents.length

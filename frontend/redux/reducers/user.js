@@ -7,7 +7,8 @@ const initialState = {
   error: null,
   addressloading: false,
   successMessage: null,
-  adminUsers: [], 
+  adminUsers: [],
+  isLoading: false, // Add isLoading for consistency with other reducers
 };
 
 const userSlice = createSlice({
@@ -71,16 +72,16 @@ const userSlice = createSlice({
 
     // Admin users actions
     adminAllUsersRequest: (state) => {
-      state.loading = true;
+      state.isLoading = true;
       state.error = null;
     },
     adminAllUsersSuccess: (state, action) => {
-      state.loading = false;
+      state.isLoading = false;
       state.adminUsers = action.payload || [];
       state.error = null;
     },
     adminAllUsersFailed: (state, action) => {
-      state.loading = false;
+      state.isLoading = false;
       state.error = action.payload;
     },
 

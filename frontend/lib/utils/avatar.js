@@ -17,7 +17,7 @@ export const getAvatarUrl = (avatar) => {
 };
 
 export const handleAvatarError = (e) => {
-  console.log("Avatar load error:", e.target.src);
+  // Avatar load error, using fallback
   e.target.src = "/assets/fallback-avatar.png";
 };
 
@@ -37,6 +37,6 @@ export const getImageUrl = (imageUrl) => {
 };
 
 export const handleImageError = (e) => {
-  console.log("Image load error:", e.target.src);
+  // Image load error, hiding broken image
   e.target.style.display = "none"; // Hide broken image
 };

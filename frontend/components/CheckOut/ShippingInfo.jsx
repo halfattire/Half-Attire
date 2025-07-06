@@ -30,7 +30,8 @@ function ShippingInfo({
             <input
               type="text"
               name="name"
-              value={user && user.name}
+              value={user?.name || ""}
+              readOnly
               className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
@@ -41,7 +42,8 @@ function ShippingInfo({
             <input
               type="email"
               name="email"
-              value={user && user.email}
+              value={user?.email || ""}
+              readOnly
               className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
@@ -54,7 +56,8 @@ function ShippingInfo({
             <input
               type="number"
               name="phoneNumber"
-              value={user && user.phoneNumber}
+              value={user?.phoneNumber || ""}
+              readOnly
               className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
@@ -65,7 +68,7 @@ function ShippingInfo({
             <input
               type="number"
               name="zipCode"
-              value={zipCode}
+              value={zipCode || ""}
               onChange={(e) => setZipCode(e.target.value)}
               className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             />
@@ -78,7 +81,7 @@ function ShippingInfo({
             </label>
             <select
               id="selectedCountry"
-              value={country}
+              value={country || ""}
               onChange={(e) => setCountry(e.target.value)}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
@@ -97,14 +100,14 @@ function ShippingInfo({
             </label>
             <select
               id="selectedCity"
-              value={city}
+              value={city || ""}
               onChange={(e) => setCity(e.target.value)}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select your city</option>
               {City &&
-                City.getCitiesOfCountry(country).map((item) => (
-                  <option key={item.name} value={item.name}>
+                City.getCitiesOfCountry(country).map((item, index) => (
+                  <option key={`${item.name}-${index}`} value={item.name}>
                     {item.name}
                   </option>
                 ))}
@@ -119,7 +122,7 @@ function ShippingInfo({
             <input
               type="text"
               name="address1"
-              value={address1}
+              value={address1 || ""}
               onChange={(e) => setAddress1(e.target.value)}
               className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             />
@@ -131,7 +134,7 @@ function ShippingInfo({
             <input
               type="text"
               name="address2"
-              value={address2}
+              value={address2 || ""}
               onChange={(e) => setAddress2(e.target.value)}
               className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             />

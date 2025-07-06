@@ -38,6 +38,15 @@ const AllUsers = () => {
     fetchUsers()
   }
 
+  const handleViewUser = (userId) => {
+    const user = adminUsers.find(u => u._id === userId)
+    if (user) {
+      toast.info(`Viewing user: ${user.name} (${user.email})`)
+      // You can implement a modal or navigate to user details page
+      // User details available
+    }
+  }
+
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`${server}/user/admin-delete-user/${id}`, {
@@ -55,12 +64,14 @@ const AllUsers = () => {
     {
       field: "id",
       headerName: "User ID",
+      minWidth: 120,
       flex: 0.7,
       renderCell: (params) => <span className="text-blue-600 font-medium">#{params.value.slice(-8)}</span>,
     },
     {
       field: "avatar",
       headerName: "Avatar",
+      minWidth: 80,
       flex: 0.5,
       sortable: false,
       renderCell: (params) => (
@@ -76,18 +87,21 @@ const AllUsers = () => {
     {
       field: "name",
       headerName: "Name",
+      minWidth: 150,
       flex: 1,
       renderCell: (params) => <span className="font-medium">{params.value}</span>,
     },
     {
       field: "email",
       headerName: "Email",
+      minWidth: 200,
       flex: 1.2,
       renderCell: (params) => <span className="text-gray-600">{params.value}</span>,
     },
     {
       field: "role",
       headerName: "Role",
+      minWidth: 100,
       flex: 0.6,
       renderCell: (params) => (
         <span
@@ -106,16 +120,24 @@ const AllUsers = () => {
     {
       field: "joinedAt",
       headerName: "Joined Date",
+      minWidth: 120,
       flex: 0.8,
     },
     {
       field: "actions",
       headerName: "Actions",
+      minWidth: 120,
       flex: 0.8,
       sortable: false,
       renderCell: (params) => (
         <div className="flex gap-2">
-          <Button size="small" variant="outlined" color="primary">
+          <Button 
+            size="small" 
+            variant="outlined" 
+            color="primary"
+            onClick={() => handleViewUser(params.id)}
+            title="View User"
+          >
             <AiOutlineEye size={16} />
           </Button>
           <Button
@@ -126,6 +148,7 @@ const AllUsers = () => {
               setUserId(params.id)
               setOpen(true)
             }}
+            title="Delete User"
           >
             <AiOutlineDelete size={16} />
           </Button>
@@ -150,19 +173,19 @@ const AllUsers = () => {
   const customerCount = adminUsers.filter((user) => user.role === "user").length
 
   return (
-    <div className="w-full p-6 bg-gray-50 min-h-screen">
+    <div className="w-full p-4 sm:p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">All Users</h1>
-          <p className="text-gray-600">Manage platform users and their roles</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">All Users</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage platform users and their roles</p>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">Last updated: {lastRefresh.toLocaleTimeString()}</span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+          <span className="text-xs sm:text-sm text-gray-500">Last updated: {lastRefresh.toLocaleTimeString()}</span>
           <button
             onClick={handleRefresh}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm"
           >
             <MdRefresh className={isLoading ? "animate-spin" : ""} />
             Refresh
@@ -171,74 +194,80 @@ const AllUsers = () => {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-sm font-medium text-gray-600">Total Users</h3>
-          <p className="text-2xl font-bold text-gray-900">{totalUsers}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h3 className="text-xs sm:text-sm font-medium text-gray-600">Total Users</h3>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900">{totalUsers}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-sm font-medium text-gray-600">Customers</h3>
-          <p className="text-2xl font-bold text-green-600">{customerCount}</p>
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h3 className="text-xs sm:text-sm font-medium text-gray-600">Customers</h3>
+          <p className="text-lg sm:text-2xl font-bold text-green-600">{customerCount}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-sm font-medium text-gray-600">Sellers</h3>
-          <p className="text-2xl font-bold text-blue-600">{sellerCount}</p>
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h3 className="text-xs sm:text-sm font-medium text-gray-600">Sellers</h3>
+          <p className="text-lg sm:text-2xl font-bold text-blue-600">{sellerCount}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-sm font-medium text-gray-600">Admins</h3>
-          <p className="text-2xl font-bold text-red-600">{adminCount}</p>
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h3 className="text-xs sm:text-sm font-medium text-gray-600">Admins</h3>
+          <p className="text-lg sm:text-2xl font-bold text-red-600">{adminCount}</p>
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">Users Management</h2>
-          <p className="text-sm text-gray-600">View and manage all platform users</p>
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900">Users Management</h2>
+          <p className="text-xs sm:text-sm text-gray-600">View and manage all platform users</p>
         </div>
 
-        <div className="p-6">
-          {isLoading ? (
+        <div className="p-4 sm:p-6 overflow-x-auto">
+          {isLoading && adminUsers.length === 0 ? (
             <div className="flex justify-center items-center h-64">
               <Loader />
             </div>
           ) : error ? (
             <div className="text-center py-12">
-              <p className="text-red-600 mb-4">Error loading users: {error}</p>
+              <p className="text-red-600 mb-4 text-sm sm:text-base">Error loading users: {error}</p>
               <button
                 onClick={handleRefresh}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
               >
                 Retry
               </button>
             </div>
           ) : rows.length > 0 ? (
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 25 },
-                },
-              }}
-              pageSizeOptions={[10, 25, 50]}
-              disableRowSelectionOnClick
-              autoHeight
-              sx={{
-                border: "none",
-                "& .MuiDataGrid-cell": {
-                  borderBottom: "1px solid #f3f4f6",
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f9fafb",
-                  borderBottom: "1px solid #e5e7eb",
-                },
-              }}
-            />
+            <div className="min-w-full">
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 25 },
+                  },
+                }}
+                pageSizeOptions={[10, 25, 50]}
+                disableRowSelectionOnClick
+                autoHeight
+                sx={{
+                  border: "none",
+                  minWidth: 700,
+                  "& .MuiDataGrid-cell": {
+                    borderBottom: "1px solid #f3f4f6",
+                  },
+                  "& .MuiDataGrid-columnHeaders": {
+                    backgroundColor: "#f9fafb",
+                    borderBottom: "1px solid #e5e7eb",
+                  },
+                  "& .MuiDataGrid-root": {
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  },
+                }}
+              />
+            </div>
           ) : (
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-              <p className="text-gray-600">Users will appear here once they register</p>
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No users found</h3>
+              <p className="text-sm sm:text-base text-gray-600">Users will appear here once they register</p>
             </div>
           )}
         </div>
@@ -246,27 +275,27 @@ const AllUsers = () => {
 
       {/* Delete Confirmation Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 w-full max-w-md mx-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Confirm Deletion</h3>
               <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">
                 <RxCross1 size={20} />
               </button>
             </div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm sm:text-base text-gray-600 mb-6">
               Are you sure you want to delete this user? This action cannot be undone.
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(userId)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base"
               >
                 Delete User
               </button>

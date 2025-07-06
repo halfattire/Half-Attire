@@ -45,18 +45,18 @@ function Register() {
       try {
         result = await signInWithPopup(auth, googleProvider)
       } catch (popupError) {
-        console.log("Popup failed, trying redirect method:", popupError)
+        // Popup failed, trying redirect method
         // If popup fails, you could implement redirect method here
         throw popupError
       }
       
       // Debug: Check what we get from Firebase
-      console.log("Firebase result:", result.user)
-      console.log("User email:", result.user.email)
-      console.log("User displayName:", result.user.displayName)
-      console.log("User photoURL:", result.user.photoURL)
-      console.log("User emailVerified:", result.user.emailVerified)
-      console.log("User providerData:", result.user.providerData)
+      // Firebase result available
+      // User email available
+      // User displayName available
+      // User photoURL available
+      // User emailVerified available
+      // User providerData available
 
       // Ensure we have email from the user object
       const userEmail = result.user.email || result.user.providerData?.[0]?.email

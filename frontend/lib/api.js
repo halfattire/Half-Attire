@@ -38,7 +38,7 @@ api.interceptors.response.use(
   (error) => {
     // Handle 401 errors (unauthorized)
     if (error.response && error.response.status === 401) {
-      console.log("Authentication error - redirecting to login")
+      // Authentication error - redirecting to login
       // You could redirect to login page or refresh token here
     }
     return Promise.reject(error)

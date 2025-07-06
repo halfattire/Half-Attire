@@ -95,8 +95,8 @@ export const getAllEventsAdmin = () => async (dispatch) => {
     dispatch(adminAllEventsSuccess(data.events));
     return data.events;
   } catch (error) {
-    console.error("Admin events fetch error:", error);
-    dispatch(adminAllEventsFailed(error.response?.data?.message || "Failed to fetch admin events"));
+    const errorMessage = error.response?.data?.message || "Failed to fetch admin events";
+    dispatch(adminAllEventsFailed(errorMessage));
     return [];
   }
 };

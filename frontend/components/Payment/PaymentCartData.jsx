@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 function PaymentCartData({ orderData }) {
   return (
     <div className="w-full rounded-md bg-white p-6 shadow-sm md:mt-4 md:w-2/5">

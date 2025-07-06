@@ -9,6 +9,7 @@ import { HiOutlineUserGroup } from "react-icons/hi"
 import { FaProductHunt } from "react-icons/fa"
 import { MdEmojiEvents } from "react-icons/md"
 import { MdOutlineSettings } from "react-icons/md"
+import { FaEnvelope } from "react-icons/fa"
 
 const AdminSidebar = () => {
   const pathname = usePathname()
@@ -50,8 +51,20 @@ const AdminSidebar = () => {
       icon: MdEmojiEvents,
       path: "/admin/events",
     },
+    {
+      id: 7,
+      title: "Newsletter",
+      icon: FaEnvelope,
+      path: "/admin/newsletter",
+    },
+    {
+      id: 8,
+      title: "Settings",
+      icon: MdOutlineSettings,
+      path: "/admin/settings",
+    },
     // {
-    //   id: 7,
+    //   id: 9,
     //   title: "Withdraw Requests",
     //   icon: CiMoneyBill,
     //   path: "/admin/withdraw",

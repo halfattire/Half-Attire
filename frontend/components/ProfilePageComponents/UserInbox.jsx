@@ -29,7 +29,7 @@ const UserInboxPage = () => {
   const socketId = useRef();
 
   useEffect(() => {
-     socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:4000", {
+     socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:5000", {
     transports: ["websocket"],
   });
 
@@ -63,7 +63,7 @@ const UserInboxPage = () => {
         );
         setConversations(response.data.conversations);
       } catch (error) {
-        console.log(error);
+        // Error fetching conversations
       }
     };
     getConversation();
@@ -93,7 +93,7 @@ const UserInboxPage = () => {
         );
         setMessages(response.data.messages);
       } catch (error) {
-        console.log(error);
+        // Error fetching messages
       }
     };
     getMessage();
@@ -127,7 +127,7 @@ const UserInboxPage = () => {
           });
       }
     } catch (error) {
-      console.log(error);
+      // Error sending message
     }
   };
 
@@ -220,7 +220,7 @@ const MessageList = ({
         const res = await axios.get(`${server}/shop/get-shop-info/${userId}`);
         setUser(res.data.shop);
       } catch (error) {
-        console.log(error);
+        // Error fetching user data
       }
     };
     getUser();

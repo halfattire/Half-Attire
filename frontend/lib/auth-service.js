@@ -54,18 +54,18 @@ export const handleGoogleSignIn = async () => {
  */
 export const logoutUser = async () => {
   try {
-    console.log("Starting logout process...");
+    // Starting logout process...
 
     // 1. Sign out from Firebase first
     await signOut(auth);
-    console.log("Firebase signout successful");
+    // Firebase signout successful
 
     // 2. Sign out from backend (clear cookies)
     try {
       await axios.get(`${server}/user/logout`, { withCredentials: true });
-      console.log("Backend logout successful");
+      // Backend logout successful
     } catch (backendError) {
-      console.warn("Backend logout failed, but continuing:", backendError.message);
+      // Backend logout failed, but continuing
       // Continue even if backend logout fails
     }
 
@@ -77,12 +77,12 @@ export const logoutUser = async () => {
     // Clear any other auth-related items
     localStorage.clear();
 
-    console.log("Logout completed successfully");
+    // Logout completed successfully
     toast.success("Logged out successfully");
 
     return { success: true };
   } catch (error) {
-    console.error("Logout error:", error);
+    // Logout error
 
     // Even if there's an error, clear local storage
     localStorage.removeItem("userData");
@@ -101,9 +101,9 @@ export const checkAuthStatus = () => {
   const userData = localStorage.getItem("userData");
   const firebaseUser = auth.currentUser;
 
-  console.log("Auth status check:");
-  console.log("- localStorage userData:", userData ? "Present" : "Missing");
-  console.log("- Firebase user:", firebaseUser ? "Present" : "Missing");
+  // Auth status check:
+  // - localStorage userData: Present/Missing
+  // - Firebase user: Present/Missing
 
   return {
     hasLocalData: !!userData,

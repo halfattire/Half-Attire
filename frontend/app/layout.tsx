@@ -18,13 +18,14 @@
     description: "Your one-stop destination for fashion and lifestyle products from multiple vendors",
     icons: {
       icon: [
+        { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
         { url: "/favicon.png", sizes: "32x32", type: "image/png" },
         { url: "/favicon.png", sizes: "16x16", type: "image/png" },
       ],
       apple: [
         { url: "/favicon.png", sizes: "180x180", type: "image/png" },
       ],
-      shortcut: "/favicon.png",
+      shortcut: "/favicon.ico",
     },
     metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || "https://www.halfattire.com"),
   };

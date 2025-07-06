@@ -13,7 +13,7 @@ import Image from "next/image";
 import { getAvatarUrl, handleAvatarError, getImageUrl, handleImageError } from "@/lib/utils/avatar";
 
 // Update to your WebSocket server URL
-const ENDPOINT = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "http://localhost:4000";
+const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:5000";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 function DashBoardMessages() {
@@ -60,7 +60,7 @@ function DashBoardMessages() {
 
         setConversation(response.data.conversations);
       } catch (error) {
-        console.log(error);
+        // Error fetching conversations
       }
     };
     getConversation();
@@ -91,7 +91,7 @@ function DashBoardMessages() {
         );
         setMessages(response.data.messages);
       } catch (error) {
-        console.log(error);
+        // Error fetching messages
       }
     };
     getMessage();
@@ -125,11 +125,11 @@ function DashBoardMessages() {
             updateLastMessage();
           })
           .catch((error) => {
-            console.log(error);
+            // Error sending message
           });
       }
     } catch (error) {
-      console.log(error);
+      // Error in message handler
     }
   };
 
@@ -148,7 +148,7 @@ function DashBoardMessages() {
         setNewMessage("");
       })
       .catch((error) => {
-        console.log(error);
+        // Error updating last message
       });
   };
 
@@ -169,7 +169,7 @@ function DashBoardMessages() {
         );
         setUserData(response.data.user);
       } catch (error) {
-        console.log("Error fetching user data:", error);
+        // Error fetching user data
       }
     };
     fetchUserData();
@@ -252,7 +252,7 @@ function MessageList({
         setMemberData(response.data.user);
         setUserData(response.data.user);
       } catch (error) {
-        console.log("Error fetching member data:", error);
+        // Error fetching member data
       }
     };
     fetchMemberData();

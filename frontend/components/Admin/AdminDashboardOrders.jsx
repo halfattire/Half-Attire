@@ -31,7 +31,7 @@ const AdminDashboardOrders = () => {
   };
 
   const handleRefresh = () => {
-    console.log("🔄 Manual refresh triggered");
+    // Manual refresh triggered
     fetchOrders();
   };
 
@@ -117,18 +117,44 @@ const AdminDashboardOrders = () => {
     },
   ];
 
-  const rows = adminOrders.map((order) => ({
-    id: order._id,
-    customer: {
-      name: order.user?.name || "Unknown",
-      email: order.user?.email || "N/A",
-    },
-    shop: order.cart?.[0]?.shop?.name || "Unknown Shop",
-    status: order.status,
-    itemsQty: order.cart?.reduce((acc, item) => acc + (item.qty || 0), 0) || 0,
-    total: `PKR ${order.totalPrice}`,
-    createdAt: new Date(order.createdAt).toLocaleDateString(),
-  }));
+  const rows = adminOrders.map((order) => {
+    // Extract shop name with improved logic
+    let shopName = "Unknown Shop";
+    
+    try {
+      if (order.cart && order.cart.length > 0) {
+        const firstItem = order.cart[0];
+        
+        // Priority 1: Check if shop object has name
+        if (firstItem.shop && firstItem.shop.name) {
+          shopName = firstItem.shop.name;
+        }
+        // Priority 2: Check if shop is a string
+        else if (typeof firstItem.shop === 'string') {
+          shopName = firstItem.shop;
+        }
+        // Priority 3: Create name from shopId
+        else if (firstItem.shopId) {
+          shopName = `Shop ${firstItem.shopId.toString().slice(-6)}`;
+        }
+      }
+    } catch (error) {
+      console.log(`Error extracting shop name for order ${order._id}:`, error);
+    }
+    
+    return {
+      id: order._id,
+      customer: {
+        name: order.user?.name || "Unknown",
+        email: order.user?.email || "N/A",
+      },
+      shop: shopName,
+      status: order.status,
+      itemsQty: order.cart?.reduce((acc, item) => acc + (item.qty || 0), 0) || 0,
+      total: `PKR ${order.totalPrice}`,
+      createdAt: new Date(order.createdAt).toLocaleDateString(),
+    };
+  });
 
   // Calculate statistics
   const totalOrders = adminOrders.length;

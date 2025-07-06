@@ -82,10 +82,7 @@ export const loadSeller = () => async (dispatch) => {
 
 export const updateUserInfomation = (name, phoneNumber) => async (dispatch) => {
   try {
-    dispatch(updateUserInfoRequest());
-
-    console.log("Updating user info with:", { name, phoneNumber });
-
+    dispatch(updateUserInfoRequest());    // Updating user info with: { name, phoneNumber }
     const { data } = await axios.put(
       `${server}/user/update-user-info`,
       {
@@ -100,7 +97,7 @@ export const updateUserInfomation = (name, phoneNumber) => async (dispatch) => {
       },
     );
 
-    console.log("Update response:", data);
+    // Update response available
 
     // Update localStorage
     if (data.user) {
@@ -184,7 +181,6 @@ export const getAllUsersAdmin = () => async (dispatch) => {
     dispatch(adminAllUsersSuccess(data.users));
     return data.users;
   } catch (error) {
-    console.error("Admin users fetch error:", error);
     dispatch(adminAllUsersFailed(error.response?.data?.message || "Failed to fetch admin users"));
     return [];
   }

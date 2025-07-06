@@ -1,16 +1,10 @@
-/* eslint-disable no-unused-vars */
-import {
-  CardCvcElement,
-  CardExpiryElement,
-  CardNumberElement,
-} from "@stripe/react-stripe-js";
 import { useState } from "react";
 
 function PaymentInfo({
   user,
   open,
   setOpen,
-  paymentHandler,
+  adminCardPaymentHandler,
   cashOnDeliveryHandler,
 }) {
   const [select, setSelect] = useState(1);
@@ -28,122 +22,23 @@ function PaymentInfo({
             )}
           </div>
           <h4 className="pl-2 text-[18px] font-[600] text-[#000000b1]">
-            Pay with Debit/credit card
+            Pay with Admin Card
           </h4>
         </div>
 
         {select === 1 && (
           <div className="flex w-full border-b">
-            <form className="w-full" onSubmit={paymentHandler}>
-              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Name on card
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={user && user.name}
-                    value={user && user.name}
-                    className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                    readOnly
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="expDate"
-                    className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Exp Date
-                  </label>
-                  <CardExpiryElement
-                    id="expDate"
-                    className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: "16px",
-                          lineHeight: 1.5,
-                          color: "#444",
-                        },
-                        empty: {
-                          color: "#3a120a",
-                          backgroundColor: "transparent",
-                          "::placeholder": {
-                            color: "#444",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
+            <form className="w-full" onSubmit={adminCardPaymentHandler}>
+              <div className="mt-2 mb-4">
+                <p className="text-sm text-gray-600">
+                  Payment will be processed using the admin's secure payment system.
+                </p>
               </div>
-              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                <div>
-                  <label
-                    htmlFor="cardNumber"
-                    className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Card Number
-                  </label>
-                  <CardNumberElement
-                    id="cardNumber"
-                    className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: "16px",
-                          lineHeight: 1.5,
-                          color: "#444",
-                        },
-                        empty: {
-                          color: "#3a120a",
-                          backgroundColor: "transparent",
-                          "::placeholder": {
-                            color: "#444",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="cvv"
-                    className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    CVV
-                  </label>
-                  <CardCvcElement
-                    id="cvv"
-                    className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: "16px",
-                          lineHeight: 1.5,
-                          color: "#444",
-                        },
-                        empty: {
-                          color: "#3a120a",
-                          backgroundColor: "transparent",
-                          "::placeholder": {
-                            color: "#444",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-              <button
+              <input
                 type="submit"
-                className="my-3 flex w-[150px] cursor-pointer items-center justify-center rounded-lg bg-[#f63b60] py-2.5 text-[18px] font-[600] text-[#fff]"
-              >
-                Submit
-              </button>
+                value="Pay with Admin Card"
+                className="mt-4 w-full cursor-pointer rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              />
             </form>
           </div>
         )}

@@ -14,7 +14,9 @@ function EventCountDown({ data }) {
   });
 
   function calculateTimeLeft() {
-    const difference = +new Date(data?.Finish_Date) - +new Date();
+    // Try both field names for backward compatibility
+    const finishDate = data?.finish_Date || data?.Finish_Date;
+    const difference = +new Date(finishDate) - +new Date();
 
     let timeLeft = {};
 
