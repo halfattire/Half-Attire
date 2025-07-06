@@ -1,6 +1,7 @@
+import React from "react";
 import { FaShippingFast, FaCreditCard, FaCheckCircle } from "react-icons/fa";
 
-function CheckOutSteps({ active }) {
+const CheckOutSteps = ({ active }) => {
   return (
     <div>
       <div className="hidden md:block">
@@ -118,6 +119,6 @@ function CheckOutSteps({ active }) {
       </div>
     </div>
   );
-}
+};
 
 export default CheckOutSteps;

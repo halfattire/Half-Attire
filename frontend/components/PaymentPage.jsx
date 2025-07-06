@@ -1,11 +1,11 @@
 "use client"
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import CheckOutSteps from "@/components/CheckOut/CheckOutSteps";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import Payment from "@/components/Payment/Payment";
+import Payment from "./Payment/Payment";
 
-function PaymentPage() {
+const PaymentPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" }); 
   }, []);
@@ -19,6 +19,6 @@ function PaymentPage() {
       <Footer />
     </div>
   );
-}
+};
 
 export default PaymentPage;

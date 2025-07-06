@@ -34,7 +34,7 @@ export default function ProtectedRoute({ children }) {
         // Small delay to prevent immediate redirect on page load
         setTimeout(() => {
           router.push("/login");
-        }, 100);
+        }, 500);
       } else {
         setIsInitialized(true);
       }

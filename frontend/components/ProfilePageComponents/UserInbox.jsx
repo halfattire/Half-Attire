@@ -29,20 +29,42 @@ const UserInboxPage = () => {
   const socketId = useRef();
 
   useEffect(() => {
-     socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:5000", {
-    transports: ["websocket"],
-  });
-
-    socketId.current.on("getMessage", (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
+    try {
+      socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:5000", {
+        transports: ["websocket"],
+        timeout: 5000,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
       });
-    });
+
+      socketId.current.on("connect", () => {
+        console.log("Socket connected to server");
+      });
+
+      socketId.current.on("disconnect", () => {
+        console.log("Socket disconnected from server");
+      });
+
+      socketId.current.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
+      });
+
+      socketId.current.on("getMessage", (data) => {
+        setArrivalMessage({
+          sender: data.senderId,
+          text: data.text,
+          createdAt: Date.now(),
+        });
+      });
+    } catch (error) {
+      console.error("Socket initialization error:", error);
+    }
 
     return () => {
-      socketId.current.disconnect();
+      if (socketId.current) {
+        socketId.current.disconnect();
+      }
     };
   }, []);
 
