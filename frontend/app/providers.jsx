@@ -13,6 +13,7 @@ import { server } from "@/lib/server";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { ToastContainer } from "react-toastify"; 
+import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 
 export function Providers({ children }) {
@@ -52,6 +53,16 @@ export function Providers({ children }) {
               pauseOnHover
               theme="light"
             />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+              }}
+            />
             {children}
           </Elements>
         ) : (
@@ -67,6 +78,16 @@ export function Providers({ children }) {
               draggable
               pauseOnHover
               theme="light"
+            />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+              }}
             />
             {children}
           </>

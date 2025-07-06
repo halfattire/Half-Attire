@@ -97,7 +97,9 @@ function UserOrderDetails() {
               <Image
                 src={
                   item.images[0]
-                    ? `${backend_url}/${item.images[0]}`
+                    ? item.images[0].startsWith("http") 
+                      ? item.images[0] 
+                      : `${backend_url}/${item.images[0]}`
                     : "/assets/placeholder.png"
                 }
                 className="h-20 w-20 bg-white object-contain"
@@ -192,7 +194,9 @@ function UserOrderDetails() {
               <Image
                 src={
                   selectedItem?.images[0]
-                    ? `${backend_url}/${selectedItem.images[0]}`
+                    ? selectedItem.images[0].startsWith("http") 
+                      ? selectedItem.images[0] 
+                      : `${backend_url}/${selectedItem.images[0]}`
                     : "/assets/placeholder.png"
                 }
                 alt={selectedItem?.name || "Product"}

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
 import styles from "../../style/style";
+import { getAvatarUrl, handleAvatarError, getImageUrl, handleImageError } from "@/lib/utils/avatar";
 
 const UserInboxPage = () => {
   const { user, loading } = useSelector((state) => state.user);
@@ -28,7 +29,7 @@ const UserInboxPage = () => {
   const socketId = useRef();
 
   useEffect(() => {
-     socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "https://halfattire-socket.onrender.com", {
+     socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:4000", {
     transports: ["websocket"],
   });
 
@@ -239,26 +240,18 @@ const MessageList = ({
     >
       <div className="relative">
         <img
-          src={user?.avatar 
-            ? user.avatar.startsWith("http") 
-              ? user.avatar 
-              : `${backend_url}/${user.avatar}` 
-            : "/assets/fallback-avatar.png"}
-          alt=""
-          className="w-[50px] h-[50px] rounded-full"
+          src={getAvatarUrl(user?.avatar)}
+          alt="User Avatar"
+          className="w-[50px] h-[50px] rounded-full object-cover"
+          onError={handleAvatarError}
         />
-        {online ? (
-          <div className="w-[12px] h-[12px] bg-green-400 rounded-full absolute top-[2px] right-[2px]" />
-        ) : (
-          <div className="w-[12px] h-[12px] bg-[#c7b9b9] rounded-full absolute top-[2px] right-[2px]" />
-        )}
       </div>
       <div className="pl-3">
         <h1 className="text-[18px]">{user?.name}</h1>
         <p className="text-[16px] text-[#000c]">
-          {!loading && data?.lastMessageId !== userData?._id
-            ? "You:"
-            : userData?.name.split(" ")[0] + ": "}{" "}
+          {!loading && data?.lastMessageId === me
+            ? "You: "
+            : user?.name?.split(" ")[0] + ": "}{" "}
           {data?.lastMessage}
         </p>
       </div>
@@ -284,17 +277,13 @@ const SellerInbox = ({
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
-            src={userData?.avatar 
-              ? userData.avatar.startsWith("http") 
-                ? userData.avatar 
-                : `${backend_url}/${userData.avatar}` 
-              : "/assets/fallback-avatar.png"}
-            alt=""
-            className="w-[60px] h-[60px] rounded-full"
+            src={getAvatarUrl(userData?.avatar)}
+            alt="User Avatar"
+            className="w-[60px] h-[60px] rounded-full object-cover"
+            onError={handleAvatarError}
           />
           <div className="pl-3">
             <h1 className="text-[18px] font-[600]">{userData?.name}</h1>
-            <h1>{activeStatus ? "Active Now" : ""}</h1>
           </div>
         </div>
         <AiOutlineArrowRight
@@ -338,13 +327,10 @@ const SellerInbox = ({
             >
               {item.sender !== sellerId && (
                 <img
-                  src={userData?.avatar 
-                    ? userData.avatar.startsWith("http") 
-                      ? userData.avatar 
-                      : `${backend_url}/${userData.avatar}` 
-                    : "/assets/fallback-avatar.png"}
-                  className="w-[40px] h-[40px] rounded-full mr-3"
-                  alt=""
+                  src={getAvatarUrl(userData?.avatar)}
+                  className="w-[40px] h-[40px] rounded-full mr-3 object-cover"
+                  alt="User Avatar"
+                  onError={handleAvatarError}
                 />
               )}
 
@@ -360,6 +346,25 @@ const SellerInbox = ({
                   <p className="text-[12px] text-[#000000d3] pt-1">
                     {format(item.createdAt)}
                   </p>
+                </div>
+              )}
+
+              {/* Display message images if they exist */}
+              {item.images && item.images.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {item.images.map((image, imgIndex) => (
+                    <img
+                      key={imgIndex}
+                      src={getImageUrl(image)}
+                      alt="Message attachment"
+                      className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer"
+                      onClick={() => {
+                        // Open image in new tab or modal
+                        window.open(getImageUrl(image), '_blank');
+                      }}
+                      onError={handleImageError}
+                    />
+                  ))}
                 </div>
               )}
             </div>

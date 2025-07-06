@@ -1,0 +1,21 @@
+{
+  "name": "Half Attire",
+  "short_name": "Half Attire",
+  "description": "Multi-vendor E-commerce Platform",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3321c8"
+}

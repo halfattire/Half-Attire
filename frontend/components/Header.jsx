@@ -80,7 +80,7 @@ function Header() {
       }
       return `${backend_url}/${user.avatar}`
     }
-    return "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+    return "/assets/fallback-avatar.png"
   }
 
   useEffect(() => {
@@ -230,7 +230,7 @@ function Header() {
                       unoptimized
                       onClick={() => setShowUserMenu(!showUserMenu)}
                       onError={(e) => {
-                        e.target.src = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+                        e.target.src = "/assets/fallback-avatar.png"
                       }}
                     />
                     {/* Mobile User Dropdown */}
@@ -344,7 +344,7 @@ function Header() {
                     className="h-10 w-10 rounded-full object-cover object-top mr-3"
                     unoptimized
                     onError={(e) => {
-                      e.target.src = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+                      e.target.src = "/assets/fallback-avatar.png"
                     }}
                   />
                   <div>
@@ -446,7 +446,7 @@ function Header() {
                       unoptimized
                       onClick={() => setShowUserMenu(!showUserMenu)}
                       onError={(e) => {
-                        e.target.src = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+                        e.target.src = "/assets/fallback-avatar.png"
                       }}
                     />
                     {/* Desktop User Dropdown */}

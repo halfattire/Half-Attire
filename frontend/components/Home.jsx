@@ -6,11 +6,13 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import NewsLetter from "@/components/NewsLetter";
+import PromotionalBanner from "@/components/PromotionalBanner";
 import Sponsored from "@/components/Sponsored";
 
 function Home() {
   return (
     <div>
+      <PromotionalBanner />
       <Header />
       <Hero />
       <Categories />
@@ -18,7 +20,7 @@ function Home() {
       <Events />
       <FeaturedProduct />
       {/* <Sponsored /> */}
-      {/* <NewsLetter /> */}
+      <NewsLetter />
       <Footer />
     </div>
   );

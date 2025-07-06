@@ -10,6 +10,7 @@ import Ratings from "../Ratings";
 import moment from "moment";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Image from "next/image";
+import { backend_url } from "@/lib/server";
 
 const REVIEWS_PER_PAGE = 5;
 
@@ -129,12 +130,15 @@ function ShopProfileData({ isOwner }) {
                       ? item.user.avatar.startsWith("http") 
                         ? item.user.avatar 
                         : `${backend_url}/${item.user.avatar}`
-                      : "https://cdn-icons-png.flaticon.com/128/9131/9131529.png"
+                      : "/assets/fallback-avatar.png"
                   }
-                  className="h-10 w-10 rounded-full"
+                  className="h-10 w-10 rounded-full object-cover"
                   alt="User Avatar"
                   width={40}
                   height={40}
+                  onError={(e) => {
+                    e.target.src = "/assets/fallback-avatar.png";
+                  }}
                 />
                 <div className="pl-4">
                   <div className="flex w-full items-center">

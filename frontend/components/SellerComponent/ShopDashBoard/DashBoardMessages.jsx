@@ -10,9 +10,10 @@ import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { IoImagesOutline } from "react-icons/io5";
 import socketIO from "socket.io-client";
 import Image from "next/image";
+import { getAvatarUrl, handleAvatarError, getImageUrl, handleImageError } from "@/lib/utils/avatar";
 
 // Update to your WebSocket server URL
-const ENDPOINT = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "https://your-websocket-server.com";
+const ENDPOINT = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "http://localhost:4000";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 function DashBoardMessages() {
@@ -154,24 +155,25 @@ function DashBoardMessages() {
   // Fetch user data for the conversation
   useEffect(() => {
     const fetchUserData = async () => {
-      if (currentChat) {
-        const receiverId = currentChat.members.find(
-          (member) => member !== seller?._id
+      if (!currentChat?.members || !seller?._id) return;
+      
+      const receiverId = currentChat.members.find(
+        (member) => member !== seller._id
+      );
+      if (!receiverId) return;
+        
+      try {
+        const response = await axios.get(
+          `${server}/user/user-info/${receiverId}`,
+          { withCredentials: true }
         );
-        try {
-          const response = await axios.get(
-            `${server}/user/get-user/${receiverId}`,
-            { withCredentials: true }
-          );
-          console.log("Fetched userData:", response.data.user); // Debug log
-          setUserData(response.data.user);
-        } catch (error) {
-          console.log("Error fetching user data:", error);
-        }
+        setUserData(response.data.user);
+      } catch (error) {
+        console.log("Error fetching user data:", error);
       }
     };
     fetchUserData();
-  }, [currentChat, seller]);
+  }, [currentChat?._id, seller?._id]); // Only depend on chat ID and seller ID
 
   return (
     <div className="no-scrollbar m-3 h-[82vh] w-[90%] overflow-y-scroll rounded bg-white">
@@ -194,7 +196,7 @@ function DashBoardMessages() {
                 online={onlineCheck(item)}
                 setActiveStatus={setActiveStatus}
                 seller={seller}
-                user={user} // Pass user for dynamic fallback name
+                user={user}
               />
             ))}
         </>
@@ -238,20 +240,23 @@ function MessageList({
   // Fetch member data for the conversation
   useEffect(() => {
     const fetchMemberData = async () => {
+      if (!data?.members || !me) return;
+      
       const memberId = data.members.find((member) => member !== me);
+      if (!memberId) return;
+      
       try {
-        const response = await axios.get(`${server}/user/get-user/${memberId}`, {
+        const response = await axios.get(`${server}/user/user-info/${memberId}`, {
           withCredentials: true,
         });
-        console.log("Fetched memberData:", response.data.user); // Debug log
         setMemberData(response.data.user);
-        setUserData(response.data.user); // Update parent component's userData
+        setUserData(response.data.user);
       } catch (error) {
         console.log("Error fetching member data:", error);
       }
     };
     fetchMemberData();
-  }, [data, me, setUserData]);
+  }, [data?._id, me]); // Only depend on chat ID and seller ID
 
   const handleClick = (id) => {
     setOpen(true);
@@ -264,7 +269,7 @@ function MessageList({
   const isLastMessageFromSeller = data.lastMessageId === me;
   const messagePreviewPrefix = isLastMessageFromSeller
     ? "You: "
-    : `${memberData?.name || user?.name || "Unknown User"}: `;
+    : `${memberData?.name || "User"}: `;
   const messagePreview = data.lastMessage || "No messages yet";
 
   return (
@@ -273,34 +278,16 @@ function MessageList({
       onClick={() => handleClick(data._id)}
     >
       <div className="relative">
-        {seller?.avatar ? (
-          <Image
-            className="h-12 w-12 flex-shrink-0 rounded-full"
-            src={seller.avatar.startsWith("http") 
-              ? seller.avatar 
-              : `${backend_url}/${seller.avatar}`}
-            alt="Seller Avatar"
-            width={48}
-            height={48}
-            onError={(e) => {
-              console.log("Seller avatar load error:", e.target.src);
-              e.target.src = "/assets/fallback-avatar.png";
-            }}
-          />
-        ) : (
-          <Image
-            className="h-12 w-12 flex-shrink-0 rounded-full"
-            src="/assets/fallback-avatar.png"
-            alt="Fallback Avatar"
-            width={48}
-            height={48}
-          />
-        )}
-        <span className="absolute left-8 top-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-400 dark:border-gray-800"></span>
+        <img
+          className="h-12 w-12 flex-shrink-0 rounded-full object-cover"
+          src={getAvatarUrl(memberData?.avatar)}
+          alt="User Avatar"
+          onError={handleAvatarError}
+        />
       </div>
       <div className="pl-3">
-        <h1 className="text-lg">{memberData?.name || user?.name || "Unknown User"}</h1>
-        <p className="text-[#000c]"><span>You: </span>{messagePreview}</p>
+        <h1 className="text-lg">{memberData?.name || "Unknown User"}</h1>
+        <p className="text-[#000c]">{messagePreviewPrefix}{messagePreview}</p>
       </div>
     </div>
   );
@@ -323,32 +310,14 @@ function SellerInbox({
       {/* message header */}
       <div className="flex w-full items-center justify-between bg-slate-200 p-4">
         <div className="flex items-center">
-          {seller?.avatar ? (
-            <Image
-              src={seller.avatar.startsWith("http") 
-                ? seller.avatar 
-                : `${backend_url}/${seller.avatar}`}
-              className="h-12 w-12 rounded-full"
-              alt="Seller Avatar"
-              width={48}
-              height={48}
-              onError={(e) => {
-                console.log("Seller avatar load error in SellerInbox:", e.target.src);
-                e.target.src = "/assets/fallback-avatar.png";
-              }}
-            />
-          ) : (
-            <Image
-              src="/assets/fallback-avatar.png"
-              className="h-12 w-12 rounded-full"
-              alt="Fallback Avatar"
-              width={48}
-              height={48}
-            />
-          )}
+          <img
+            src={getAvatarUrl(userData?.avatar)}
+            className="h-12 w-12 rounded-full object-cover"
+            alt="User Avatar"
+            onError={handleAvatarError}
+          />
           <div className="pl-3">
-            <h1 className="text-lg font-semibold">{seller?.name || "Unknown Seller"}</h1>
-            <p>{activeStatus ? "Offline" : "Active Now"}</p>
+            <h1 className="text-lg font-semibold">{userData?.name || "Unknown User"}</h1>
           </div>
         </div>
         <div>
@@ -368,32 +337,38 @@ function SellerInbox({
           key={index}
         >
           {item.sender !== sellerId && (
-            <>
-              {userData?.avatar ? (
-                <img
-                  src={`${backend_url}/174712722915shafiq.png`} 
-                  className="h-8 w-8 rounded-full"
-                  alt="User Avatar"
-                  onError={(e) => {
-                    console.log("User avatar load error:", e.target.src); // Debug log
-                    e.target.src = "/assets/fallback-avatar.png"; // Fallback image
-                  }}
-                />
-                ) : (
-                  <img
-                    src="/assets/fallback-avatar.png"    // this img is fallback -- we need to make this path -- this is the path that showing the default avatar -- we need here to correct
-                    className="h-8 w-8 rounded-full"
-                    alt="Fallback Avatar"
-                  />
-                )}
-            </>
+            <img
+              src={getAvatarUrl(userData?.avatar)}
+              className="h-8 w-8 rounded-full object-cover"
+              alt="User Avatar"
+              onError={handleAvatarError}
+            />
           )}
           <div
             className={`mx-2 mt-2 flex h-min max-w-[40%] flex-col items-start rounded p-2 px-3 text-[#fff] ${
               item.sender === sellerId ? "bg-[#38c776]" : "bg-[#38bdf8]"
             }`}
           >
-            <p>{item.text}</p>
+            {item.text && <p>{item.text}</p>}
+            
+            {/* Display message images if they exist */}
+            {item.images && item.images.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {item.images.map((image, imgIndex) => (
+                  <img
+                    key={imgIndex}
+                    src={getImageUrl(image)}
+                    alt="Message attachment"
+                    className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer"
+                    onClick={() => {
+                      // Open image in new tab or modal
+                      window.open(getImageUrl(image), '_blank');
+                    }}
+                    onError={handleImageError}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ))}
