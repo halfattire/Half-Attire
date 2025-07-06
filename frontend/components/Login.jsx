@@ -101,7 +101,10 @@ export default function Login() {
       );
       console.log("Server response:", res.data);
       if (res.data.success) {
+        // Store authentication data using the persistence service
         localStorage.setItem("userData", JSON.stringify(res.data.user));
+        localStorage.setItem("token", res.data.token);
+        
         dispatch(loadUserSuccess(res.data.user));
         toast.success("Successfully signed in with Google!");
         router.push("/");
@@ -139,6 +142,10 @@ export default function Login() {
         { withCredentials: true }
       );
       if (res.data.success) {
+        // Store authentication data using the persistence service
+        localStorage.setItem("userData", JSON.stringify(res.data.user));
+        localStorage.setItem("token", res.data.token);
+        
         dispatch(loadUserSuccess(res.data.user));
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", email);

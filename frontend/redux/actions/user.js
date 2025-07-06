@@ -30,8 +30,8 @@ export const loadUser = () => async (dispatch) => {
     });
 
     // Store user data using the persistence service
-    if (data.user) {
-      setAuthToStorage(data.token || localStorage.getItem("token"), data.user);
+    if (data.user && data.token) {
+      setAuthToStorage(data.token, data.user);
     }
 
     dispatch(loadUserSuccess(data.user));

@@ -4,9 +4,8 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "../redux/store";
 import store from "../redux/store";
-import { loadSeller, loadUser } from "@/redux/actions/user";
+import { loadSeller } from "@/redux/actions/user";
 import { loadUserSuccess } from "@/redux/reducers/user";
-import { initializeAuth } from "@/lib/auth-persistence";
 import { getAllProducts } from "@/redux/actions/product";
 import { getAllEvents } from "@/redux/actions/event";
 import { useEffect, useState } from "react";
@@ -17,6 +16,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { ToastContainer } from "react-toastify"; 
 import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
+import AuthInitializer from "@/components/AuthInitializer";
 
 export function Providers({ children }) {
   const [stripeApiKey, setStripeApiKey] = useState("");
@@ -31,31 +31,19 @@ export function Providers({ children }) {
   }
 
   useEffect(() => {
-    // Load initial data and authenticate user
-    const initializeApp = async () => {
+    // Load application data
+    const loadAppData = async () => {
       try {
-        // Initialize authentication from persisted state
-        const userData = initializeAuth();
-        
-        if (userData) {
-          // Load user data into Redux if found in storage
-          store.dispatch(loadUserSuccess(userData));
-        } else {
-          // Try to load user from backend if no local data
-          store.dispatch(loadUser());
-        }
-        
-        // Load application data
         store.dispatch(getAllProducts());
         store.dispatch(getAllEvents());
-        
+        store.dispatch(loadSeller());
+        await getStripeApiKey();
       } catch (error) {
-        // Error initializing app
+        console.error("Error loading app data:", error);
       }
     };
 
-    initializeApp();
-    getStripeApiKey();
+    loadAppData();
   }, []);
 
   return (
@@ -85,7 +73,9 @@ export function Providers({ children }) {
                 },
               }}
             />
-            {children}
+            <AuthInitializer>
+              {children}
+            </AuthInitializer>
           </Elements>
         ) : (
           <>
@@ -111,7 +101,9 @@ export function Providers({ children }) {
                 },
               }}
             />
-            {children}
+            <AuthInitializer>
+              {children}
+            </AuthInitializer>
           </>
         )}
       </PersistGate>
