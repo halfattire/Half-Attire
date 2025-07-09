@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import PaymentCartData from "./PaymentCartData";
 import PaymentInfo from "./PaymentInfo";
-import {
-  useStripe,
-  useElements,
-  CardNumberElement,
-} from "@stripe/react-stripe-js";
+// Stripe imports commented out to avoid Elements context error
+// import {
+//   useStripe,
+//   useElements,
+//   CardNumberElement,
+// } from "@stripe/react-stripe-js";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -21,8 +22,9 @@ function Payment() {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
+  // Stripe hooks commented out to avoid Elements context error
+  // const stripe = useStripe();
+  // const elements = useElements();
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -11,24 +11,26 @@ import { getAllEvents } from "@/redux/actions/event";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { server } from "@/lib/server";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+// Stripe imports commented out since we're not using Stripe
+// import { Elements } from "@stripe/react-stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 import { ToastContainer } from "react-toastify"; 
 import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import AuthInitializer from "@/components/AuthInitializer";
 
 export function Providers({ children }) {
-  const [stripeApiKey, setStripeApiKey] = useState("");
+  // Stripe API key state commented out since we're not using Stripe
+  // const [stripeApiKey, setStripeApiKey] = useState("");
 
-  async function getStripeApiKey() {
-    try {
-      const { data } = await axios.get(`${server}/payment/stripeapikey`);
-      setStripeApiKey(data.stripeApiKey);
-    } catch (error) {
-      console.error("Error fetching Stripe API key:", error);
-    }
-  }
+  // async function getStripeApiKey() {
+  //   try {
+  //     const { data } = await axios.get(`${server}/payment/stripeapikey`);
+  //     setStripeApiKey(data.stripeApiKey);
+  //   } catch (error) {
+  //     console.error("Error fetching Stripe API key:", error);
+  //   }
+  // }
 
   useEffect(() => {
     // Load application data
@@ -37,7 +39,8 @@ export function Providers({ children }) {
         store.dispatch(getAllProducts());
         store.dispatch(getAllEvents());
         store.dispatch(loadSeller());
-        await getStripeApiKey();
+        // Stripe API key loading commented out
+        // await getStripeApiKey();
       } catch (error) {
         console.error("Error loading app data:", error);
       }
@@ -49,63 +52,32 @@ export function Providers({ children }) {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        {stripeApiKey ? (
-          <Elements stripe={loadStripe(stripeApiKey)}>
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: '#363636',
-                  color: '#fff',
-                },
-              }}
-            />
-            <AuthInitializer>
-              {children}
-            </AuthInitializer>
-          </Elements>
-        ) : (
-          <>
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: '#363636',
-                  color: '#fff',
-                },
-              }}
-            />
-            <AuthInitializer>
-              {children}
-            </AuthInitializer>
-          </>
-        )}
+        {/* Removed Stripe Elements wrapper since we're not using Stripe */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
+        <AuthInitializer>
+          {children}
+        </AuthInitializer>
       </PersistGate>
     </Provider>
   );

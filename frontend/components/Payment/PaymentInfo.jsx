@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import {
-  CardCvcElement,
-  CardExpiryElement,
-  CardNumberElement,
-} from "@stripe/react-stripe-js";
+// Stripe imports commented out to avoid Elements context error
+// import {
+//   CardCvcElement,
+//   CardExpiryElement,
+//   CardNumberElement,
+// } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
