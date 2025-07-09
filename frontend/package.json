@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -16,7 +16,6 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@stripe/react-stripe-js": "^3.6.0",
     "@stripe/stripe-js": "^7.1.0",
-    "@vitejs/plugin-react": "^4.4.0",
     "autoprefixer": "^10.4.21",
     "axios": "^1.9.0",
     "classnames": "^2.5.1",
@@ -41,14 +40,12 @@
     "react-icons": "^5.5.0",
     "react-lottie": "^1.2.10",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.5.0",
     "react-toastify": "^11.0.5",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.17",
-    "timeago.js": "^4.0.2",
-    "vite": "^6.2.6"
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
