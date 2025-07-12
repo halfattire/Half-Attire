@@ -65,14 +65,6 @@ export default function Login() {
         throw popupError
       }
 
-      // Debug: Check what we get from Firebase
-      console.log("Firebase result:", result.user)
-      console.log("User email:", result.user.email)
-      console.log("User displayName:", result.user.displayName)
-      console.log("User photoURL:", result.user.photoURL)
-      console.log("User emailVerified:", result.user.emailVerified)
-      console.log("User providerData:", result.user.providerData)
-
       // Ensure we have email from the user object
       const userEmail = result.user.email || result.user.providerData?.[0]?.email
       const userName = result.user.displayName || result.user.providerData?.[0]?.displayName
@@ -84,9 +76,6 @@ export default function Login() {
         photo: userPhoto,
       }
 
-      // Debug: Check what we're sending
-      console.log("Sending userData:", userData)
-
       if (!userData.email) {
         console.error("No email found in user data")
         toast.error("Unable to get email from Google account. Please try again or use a different account.")
@@ -97,8 +86,6 @@ export default function Login() {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       })
-
-      console.log("Server response:", res.data)
 
       if (res.data.success) {
         // Store authentication data using the persistence service
@@ -141,9 +128,6 @@ export default function Login() {
 
       if (res.data.success) {
         // Store authentication data using the persistence service
-        console.log("Login successful, user data:", res.data.user)
-        console.log("Login successful, token:", res.data.token)
-
         localStorage.setItem("userData", JSON.stringify(res.data.user))
         localStorage.setItem("token", res.data.token)
 

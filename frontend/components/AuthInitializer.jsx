@@ -36,11 +36,8 @@ export default function AuthInitializer({ children }) {
             
             // Validate user data structure
             if (parsedUserData && parsedUserData._id && parsedUserData.email) {
-              console.log('Restoring authentication from localStorage');
-              console.log('User data:', parsedUserData);
               dispatch(loadUserSuccess(parsedUserData));
             } else {
-              console.log('Invalid user data structure, clearing localStorage');
               localStorage.removeItem('userData');
               localStorage.removeItem('token');
             }
@@ -51,7 +48,7 @@ export default function AuthInitializer({ children }) {
             localStorage.removeItem('token');
           }
         } else {
-          console.log('No user data or token found in localStorage');
+          // No authentication data found
         }
         
         setIsInitialized(true);

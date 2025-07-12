@@ -29,12 +29,10 @@ const AdminDashboardMain = () => {
   // Fetch data function
   const fetchData = useCallback(async () => {
     if (!user || user.role !== "admin") {
-      console.log("⚠️ User not admin or not loaded yet");
       return;
     }
 
     try {
-      console.log("🔄 Fetching admin data...");
       await dispatch(getAllOrdersOfAdmin());
       await dispatch(getAllSellers());
       setLastRefresh(new Date());
@@ -52,27 +50,25 @@ const AdminDashboardMain = () => {
   }, [user, fetchData, isInitialized]);
 
   // Debug state changes
-  useEffect(() => {
-    console.log("📊 AdminOrders state changed:", {
-      length: adminOrders?.length || 0,
-      loading: adminOrderLoading,
-      error,
-      lastUpdated,
-      orders: adminOrders,
-    });
-  }, [adminOrders, adminOrderLoading, error, lastUpdated]);
+  // useEffect(() => {
+  //   // console.log("📊 AdminOrders state changed:", {
+  //   //   length: adminOrders?.length || 0,
+  //   //   loading: adminOrderLoading,
+  //   //   error,
+  //   //   lastUpdated,
+  //   //   orders: adminOrders,
+  //   // });
+  // }, [adminOrders, adminOrderLoading, error, lastUpdated]);
 
   const handleRefresh = () => {
-    console.log("🔄 Manual refresh triggered");
     fetchData();
   };
 
   // Memoized statistics
   const statistics = useMemo(() => {
-    console.log("🧮 Calculating statistics with adminOrders:", adminOrders?.length || 0);
+    // console.log("🧮 Calculating statistics with adminOrders:", adminOrders?.length || 0);
 
     if (!Array.isArray(adminOrders)) {
-      console.warn("⚠️ adminOrders is not an array:", adminOrders);
       return {
         totalOrders: 0,
         totalSellers: sellers?.length || 0,
@@ -109,7 +105,6 @@ const AdminDashboardMain = () => {
   // Memoized table data
   const tableData = useMemo(() => {
     if (!Array.isArray(adminOrders) || adminOrders.length === 0) {
-      console.log("📋 No table data - adminOrders:", adminOrders?.length || 0);
       return [];
     }
 
@@ -122,7 +117,6 @@ const AdminDashboardMain = () => {
       shopName: item?.cart?.[0]?.shop?.name || "Unknown Shop",
     }));
 
-    console.log("📋 Generated table data:", data.length, "rows");
     return data;
   }, [adminOrders]);
 

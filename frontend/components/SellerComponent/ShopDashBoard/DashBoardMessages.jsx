@@ -13,7 +13,7 @@ import Image from "next/image";
 import { getAvatarUrl, handleAvatarError, getImageUrl, handleImageError } from "@/lib/utils/avatar";
 
 // Update to your WebSocket server URL
-const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:5000";
+const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "https://halfattire-socket.onrender.com/";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 function DashBoardMessages() {

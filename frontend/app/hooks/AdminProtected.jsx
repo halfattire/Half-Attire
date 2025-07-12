@@ -10,19 +10,13 @@ export const AdminProtected = ({ children }) => {
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
 
-  useEffect(() => {
-    console.log('AdminProtected: useEffect triggered');
-    console.log('AdminProtected: loading:', loading, 'user:', user);
-    
+  useEffect(() => {    
     if (!loading) {
       if (!user) {
-        console.log('AdminProtected: No user found, redirecting to home');
         router.push("/")
       } else if (user.role !== "admin") {
-        console.log('AdminProtected: User role is not admin:', user.role, 'redirecting to home');
         router.push("/")
       } else {
-        console.log('AdminProtected: User is admin, allowing access');
         setIsChecking(false)
       }
     }

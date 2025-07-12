@@ -30,12 +30,14 @@ const UserInboxPage = () => {
 
   useEffect(() => {
     try {
-      socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:5000", {
+      socketId.current = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "https://halfattire-socket.onrender.com", {
         transports: ["websocket"],
-        timeout: 5000,
+        withCredentials: true, // if your backend uses cookies
+        secure: true, // ensures HTTPS websocket
+        timeout: 10000,
         reconnection: true,
         reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
+        reconnectionDelay: 2000,
       });
 
       socketId.current.on("connect", () => {
@@ -316,7 +318,7 @@ const SellerInbox = ({
       </div>
 
 
-{/* Message */}
+      {/* Message */}
 
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
 
