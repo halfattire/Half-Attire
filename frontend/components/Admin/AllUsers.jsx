@@ -49,9 +49,21 @@ const AllUsers = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`${server}/user/admin-delete-user/${id}`, {
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      const config = {
         withCredentials: true,
-      })
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        config.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+      }
+
+      const response = await axios.delete(`${server}/user/admin-delete-user/${id}`, config)
       toast.success(response.data.message)
       await fetchUsers() // Refresh the list
     } catch (error) {

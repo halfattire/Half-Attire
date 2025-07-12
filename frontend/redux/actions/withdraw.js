@@ -70,9 +70,23 @@ export const getAllWithdrawRequests = () => async (dispatch) => {
       type: "GET_ALL_WITHDRAWS_REQUEST",
     });
 
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
+      withCredentials: true,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
     const { data } = await axios.get(
       `${server}/withdraw/get-all-withdraw-request`,
-      { withCredentials: true }
+      config
     );
 
     dispatch({
@@ -94,12 +108,20 @@ export const updateWithdrawRequest = (id, updateData) => async (dispatch) => {
       type: "UPDATE_WITHDRAW_REQUEST",
     });
 
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
     const config = {
       headers: {
         "Content-Type": "application/json",
       },
       withCredentials: true,
     };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
     const { data } = await axios.put(
       `${server}/withdraw/update-withdraw-request/${id}`,

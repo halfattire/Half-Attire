@@ -39,12 +39,22 @@ export const getAllOrdersOfAdmin = () => async (dispatch) => {
   try {
     dispatch({ type: "adminAllOrdersRequest" });
 
-    const { data } = await axios.get(`${server}/order/admin-all-orders`, {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    const { data } = await axios.get(`${server}/order/admin-all-orders`, config);
 
     if (data.success && Array.isArray(data.orders)) {
       dispatch({ type: "adminAllOrdersSuccess", payload: data.orders });

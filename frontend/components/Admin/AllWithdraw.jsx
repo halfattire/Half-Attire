@@ -29,9 +29,22 @@ const AllWithdraw = () => {
   const fetchWithdrawRequests = async () => {
     try {
       setLoading(true)
-      const response = await axios.get(`${server}/withdraw/get-all-withdraw-request`, {
+
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      const config = {
         withCredentials: true,
-      })
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        config.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+      }
+
+      const response = await axios.get(`${server}/withdraw/get-all-withdraw-request`, config)
       if (response.data.success) {
         setData(response.data.withdraws)
         setLastRefresh(new Date())
@@ -53,13 +66,28 @@ const AllWithdraw = () => {
 
     setUpdating(true)
     try {
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
       const response = await axios.put(
         `${server}/withdraw/update-withdraw-request/${selectedWithdraw._id}`,
         {
           status: withdrawStatus,
           adminNote: adminNote,
         },
-        { withCredentials: true }
+        config
       )
       
       if (response.data.success) {

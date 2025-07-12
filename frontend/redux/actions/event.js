@@ -88,9 +88,21 @@ export const getAllEventsAdmin = () => async (dispatch) => {
   try {
     dispatch(adminAllEventsRequest());
 
-    const { data } = await axios.get(`${server}/event/admin-all-events`, {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
-    });
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    const { data } = await axios.get(`${server}/event/admin-all-events`, config);
 
     dispatch(adminAllEventsSuccess(data.events));
     return data.events;
@@ -106,9 +118,21 @@ export const deleteEventAdmin = (id) => async (dispatch) => {
   try {
     dispatch(deleteEventRequest());
 
-    const { data } = await axios.delete(`${server}/event/admin-delete-event/${id}`, {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
-    });
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    const { data } = await axios.delete(`${server}/event/admin-delete-event/${id}`, config);
 
     dispatch(deleteEventSuccess(data.message));
     return { success: true, message: data.message };

@@ -1,4 +1,5 @@
 "use client"
+
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { FaEye, FaEyeSlash } from "react-icons/fa"
@@ -15,163 +16,161 @@ import { auth, googleProvider } from "../lib/firebase"
 import LoadingButton from "./LoadingButton"
 
 export default function Login() {
-  const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.user);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const router = useRouter();
+  const dispatch = useDispatch()
+  const { isAuthenticated } = useSelector((state) => state.user)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    const userData = localStorage.getItem("userData");
+    const userData = localStorage.getItem("userData")
     if (userData) {
       try {
-        const parsedUserData = JSON.parse(userData);
-        dispatch(loadUserSuccess(parsedUserData));
+        const parsedUserData = JSON.parse(userData)
+        dispatch(loadUserSuccess(parsedUserData))
       } catch (error) {
-        localStorage.removeItem("userData");
+        localStorage.removeItem("userData")
       }
     }
 
-    const savedEmail = localStorage.getItem("rememberedEmail");
-    const savedPassword = localStorage.getItem("rememberedPassword");
+    const savedEmail = localStorage.getItem("rememberedEmail")
+    const savedPassword = localStorage.getItem("rememberedPassword")
     if (savedEmail && savedPassword) {
-      setEmail(savedEmail);
-      setPassword(savedPassword);
-      setRememberMe(true);
+      setEmail(savedEmail)
+      setPassword(savedPassword)
+      setRememberMe(true)
     }
-  }, [dispatch]);
+  }, [dispatch])
 
   if (isAuthenticated) {
-    router.push("/");
-    return null;
+    router.push("/")
+    return null
   }
 
   const handleGoogleClick = async () => {
     try {
-      setGoogleLoading(true);
-      
+      setGoogleLoading(true)
+
       // Try popup first, fallback to redirect if needed
-      let result;
+      let result
       try {
-        result = await signInWithPopup(auth, googleProvider);
+        result = await signInWithPopup(auth, googleProvider)
       } catch (popupError) {
-        console.log("Popup failed, trying redirect method:", popupError);
+        console.log("Popup failed, trying redirect method:", popupError)
         // If popup fails, you could implement redirect method here
-        throw popupError;
+        throw popupError
       }
-      
+
       // Debug: Check what we get from Firebase
-      console.log("Firebase result:", result.user);
-      console.log("User email:", result.user.email);
-      console.log("User displayName:", result.user.displayName);
-      console.log("User photoURL:", result.user.photoURL);
-      console.log("User emailVerified:", result.user.emailVerified);
-      console.log("User providerData:", result.user.providerData);
-      
+      console.log("Firebase result:", result.user)
+      console.log("User email:", result.user.email)
+      console.log("User displayName:", result.user.displayName)
+      console.log("User photoURL:", result.user.photoURL)
+      console.log("User emailVerified:", result.user.emailVerified)
+      console.log("User providerData:", result.user.providerData)
+
       // Ensure we have email from the user object
-      const userEmail = result.user.email || result.user.providerData?.[0]?.email;
-      const userName = result.user.displayName || result.user.providerData?.[0]?.displayName;
-      const userPhoto = result.user.photoURL || result.user.providerData?.[0]?.photoURL;
-      
+      const userEmail = result.user.email || result.user.providerData?.[0]?.email
+      const userName = result.user.displayName || result.user.providerData?.[0]?.displayName
+      const userPhoto = result.user.photoURL || result.user.providerData?.[0]?.photoURL
+
       const userData = {
         name: userName || userEmail?.split("@")[0] || "User",
         email: userEmail,
         photo: userPhoto,
-      };
-      
-      // Debug: Check what we're sending
-      console.log("Sending userData:", userData);
-      
-      if (!userData.email) {
-        console.error("No email found in user data");
-        toast.error("Unable to get email from Google account. Please try again or use a different account.");
-        return;
       }
-      
-      const res = await axios.post(
-        `${server}/user/google`,
-        userData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      console.log("Server response:", res.data);
+
+      // Debug: Check what we're sending
+      console.log("Sending userData:", userData)
+
+      if (!userData.email) {
+        console.error("No email found in user data")
+        toast.error("Unable to get email from Google account. Please try again or use a different account.")
+        return
+      }
+
+      const res = await axios.post(`${server}/user/google`, userData, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      })
+
+      console.log("Server response:", res.data)
+
       if (res.data.success) {
         // Store authentication data using the persistence service
-        localStorage.setItem("userData", JSON.stringify(res.data.user));
-        localStorage.setItem("token", res.data.token);
-        
-        dispatch(loadUserSuccess(res.data.user));
-        toast.success("Successfully signed in with Google!");
-        router.push("/");
+        localStorage.setItem("userData", JSON.stringify(res.data.user))
+        localStorage.setItem("token", res.data.token)
+
+        dispatch(loadUserSuccess(res.data.user))
+        toast.success("Successfully signed in with Google!")
+        router.push("/")
       } else {
-        toast.error(res.data.message || "Authentication failed");
+        toast.error(res.data.message || "Authentication failed")
       }
     } catch (error) {
-      console.error("Could not sign in with Google", error);
+      console.error("Could not sign in with Google", error)
       if (error.code === "auth/popup-closed-by-user") {
-        toast.info("Sign-in cancelled");
+        toast.info("Sign-in cancelled")
       } else if (error.code === "auth/popup-blocked") {
-        toast.error("Popup blocked. Please allow popups for this site and try again.");
+        toast.error("Popup blocked. Please allow popups for this site and try again.")
       } else if (error.response) {
-        console.error("Server response:", error.response.data);
-        toast.error(error.response.data?.message || "Server error");
+        console.error("Server response:", error.response.data)
+        toast.error(error.response.data?.message || "Server error")
       } else {
-        toast.error("Google sign-in failed. Please try again.");
+        toast.error("Google sign-in failed. Please try again.")
       }
     } finally {
-      setGoogleLoading(false);
+      setGoogleLoading(false)
     }
-  };
+  }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
+
     try {
-      const res = await axios.post(
-        `${server}/user/login`,
-        { email, password, rememberMe },
-        { withCredentials: true }
-      );
+      const res = await axios.post(`${server}/user/login`, { email, password, rememberMe }, { withCredentials: true })
+
       if (res.data.success) {
         // Store authentication data using the persistence service
-        console.log('Login successful, user data:', res.data.user);
-        console.log('Login successful, token:', res.data.token);
-        
-        localStorage.setItem("userData", JSON.stringify(res.data.user));
-        localStorage.setItem("token", res.data.token);
-        
-        dispatch(loadUserSuccess(res.data.user));
+        console.log("Login successful, user data:", res.data.user)
+        console.log("Login successful, token:", res.data.token)
+
+        localStorage.setItem("userData", JSON.stringify(res.data.user))
+        localStorage.setItem("token", res.data.token)
+
+        dispatch(loadUserSuccess(res.data.user))
+
         if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-          localStorage.setItem("rememberedPassword", password);
+          localStorage.setItem("rememberedEmail", email)
+          localStorage.setItem("rememberedPassword", password)
         } else {
-          localStorage.removeItem("rememberedEmail");
-          localStorage.removeItem("rememberedPassword");
+          localStorage.removeItem("rememberedEmail")
+          localStorage.removeItem("rememberedPassword")
         }
-        toast.success("User successfully logged in");
-        router.push("/");
+
+        toast.success("User successfully logged in")
+        router.push("/")
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message)
       } else {
-        toast.error("An error occurred. Please try again.");
+        toast.error("An error occurred. Please try again.")
       }
-      console.log(error);
+      console.log(error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div>
@@ -180,27 +179,31 @@ export default function Login() {
           <FaArrowLeftLong size={20} />
         </span>
       </Link>
+
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
-          <div className="mt-10 w-full max-w-xs mx-auto rounded-lg bg-white shadow md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
+          <div className="mt-10 w-full max-w-sm mx-auto rounded-lg bg-white shadow md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
             <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-                <LoadingButton
-                  onClick={handleGoogleClick}
-                  loading={googleLoading}
-                  variant="outline"
-                  className="w-full border-gray-300 text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                >
-                  <FcGoogle className="h-5 w-5 mr-2" />
-                  Continue with Google
-                </LoadingButton>
+
+              <LoadingButton
+                onClick={handleGoogleClick}
+                loading={googleLoading}
+                variant="outline"
+                className="w-full border-gray-300 text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+              >
+                <FcGoogle className="h-5 w-5 mr-2" />
+                Continue with Google
+              </LoadingButton>
+
               <div className="flex items-center">
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
                 <div className="px-3 text-gray-500 text-sm dark:text-gray-400">or</div>
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
               </div>
+
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
@@ -264,11 +267,7 @@ export default function Login() {
                     </div>
                   </div>
                 </div>
-                <LoadingButton
-                  type="submit"
-                  loading={loading}
-                  className="w-full"
-                >
+                <LoadingButton type="submit" loading={loading} className="w-full">
                   Sign in
                 </LoadingButton>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
@@ -283,5 +282,5 @@ export default function Login() {
         </div>
       </section>
     </div>
-  );
+  )
 }

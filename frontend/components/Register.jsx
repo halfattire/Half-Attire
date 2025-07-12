@@ -27,7 +27,6 @@ function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
-
   const router = useRouter()
 
   useEffect(() => {
@@ -40,9 +39,8 @@ function Register() {
   const handleGoogleClick = async () => {
     try {
       setGoogleLoading(true)
-
       // Try popup first, fallback to redirect if needed
-      let result;
+      let result
       try {
         result = await signInWithPopup(auth, googleProvider)
       } catch (popupError) {
@@ -50,7 +48,7 @@ function Register() {
         // If popup fails, you could implement redirect method here
         throw popupError
       }
-      
+
       // Debug: Check what we get from Firebase
       // Firebase result available
       // User email available
@@ -58,7 +56,6 @@ function Register() {
       // User photoURL available
       // User emailVerified available
       // User providerData available
-
       // Ensure we have email from the user object
       const userEmail = result.user.email || result.user.providerData?.[0]?.email
       const userName = result.user.displayName || result.user.providerData?.[0]?.displayName
@@ -98,7 +95,6 @@ function Register() {
       }
     } catch (error) {
       console.error("Could not sign in with Google", error)
-
       if (error.code === "auth/popup-closed-by-user") {
         toast.info("Sign-in cancelled")
       } else if (error.code === "auth/popup-blocked") {
@@ -190,9 +186,10 @@ function Register() {
           <FaArrowLeftLong size={20} />
         </span>
       </Link>
+
       <section className="bg-gray-50 py-6 dark:bg-gray-900">
         <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:min-h-screen lg:py-0">
-          <div className="mt-4 w-full rounded-lg bg-white shadow sm:max-w-sm md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
+          <div className="mt-4 w-full max-w-sm mx-auto rounded-lg bg-white shadow md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
             <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Create an account
@@ -274,7 +271,6 @@ function Register() {
                     </div>
                   </div>
                 </div>
-
                 <div>
                   <div className="mt-2 flex items-center">
                     <span className="inline-block h-8 w-8 overflow-hidden rounded-full">
@@ -305,12 +301,7 @@ function Register() {
                     </label>
                   </div>
                 </div>
-
-                <LoadingButton
-                  type="submit"
-                  loading={loading}
-                  className="w-full"
-                >
+                <LoadingButton type="submit" loading={loading} className="w-full">
                   Sign up
                 </LoadingButton>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">

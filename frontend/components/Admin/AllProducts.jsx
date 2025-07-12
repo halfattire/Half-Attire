@@ -13,15 +13,27 @@
     const [data, setData] = useState([]);
 
     useEffect(() => {
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      const config = {
+        withCredentials: true,
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        config.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+      }
+
       axios
-        .get(`${server}/product/admin-all-products`, {
-          withCredentials: true,
-        })
+        .get(`${server}/product/admin-all-products`, config)
         .then((res) => {
           setData(res.data.products);
         })
         .catch((error) => {
-          toast.error(error.response.data.message);
+          toast.error(error.response?.data?.message || "Failed to fetch products");
         });
     }, []);
 

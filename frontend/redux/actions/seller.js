@@ -13,9 +13,22 @@ import {
 export const getSeller = () => async (dispatch) => {
   try {
     dispatch(loadSellerRequest())
-    const { data } = await axios.get(`${server}/shop/getSeller`, {
+    
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
-    })
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    const { data } = await axios.get(`${server}/shop/getSeller`, config)
     dispatch(loadSellerSuccess(data.seller))
   } catch (error) {
     dispatch(loadSellerFail(error.response?.data?.message || "Failed to load seller"))
@@ -27,9 +40,21 @@ export const getAllSellers = () => async (dispatch) => {
   try {
     dispatch(getAllSellerRequest())
 
-    const { data } = await axios.get(`${server}/shop/admin-all-sellers`, {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
-    })
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    const { data } = await axios.get(`${server}/shop/admin-all-sellers`, config)
 
     dispatch(getAllSellerSuccess(data.sellers))
   } catch (error) {

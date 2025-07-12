@@ -175,9 +175,21 @@ export const getAllUsersAdmin = () => async (dispatch) => {
   try {
     dispatch(adminAllUsersRequest());
 
-    const { data } = await axios.get(`${server}/user/admin-all-users`, {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
-    });
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    const { data } = await axios.get(`${server}/user/admin-all-users`, config);
 
     dispatch(adminAllUsersSuccess(data.users));
     return data.users;

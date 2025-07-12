@@ -24,10 +24,22 @@ const AllSellers = () => {
   }, [dispatch]);
 
   const handleDelete = async (id) => {
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
+      withCredentials: true,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
     await axios
-      .delete(`${server}/shop/admin-delete-seller/${id}`, {
-        withCredentials: true,
-      })
+      .delete(`${server}/shop/admin-delete-seller/${id}`, config)
       .then((res) => {
         toast.success(res.data.message);
         dispatch(getAllSellers());

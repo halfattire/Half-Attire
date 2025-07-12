@@ -26,18 +26,28 @@ const AdminOrderDetail = () => {
       fetchOrderDetails();
     }
   }, [orderId]);
-
   const fetchOrderDetails = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const url = `${server}/order/admin/order/${orderId}`;
       // Frontend: Making request to backend
 
-      const { data } = await axios.get(url, {
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      const config = {
         withCredentials: true,
-      });
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        config.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+      }
+
+      const { data } = await axios.get(url, config);
 
       // Frontend: Response received
 
@@ -58,10 +68,25 @@ const AdminOrderDetail = () => {
   const updateOrderStatus = async (newStatus) => {
     try {
       setUpdating(true);
+      
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      const config = {
+        withCredentials: true,
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        config.headers = {
+          Authorization: `Bearer ${token}`,
+        };
+      }
+
       const { data } = await axios.put(
         `${server}/order/admin/order/${orderId}`,
         { status: newStatus },
-        { withCredentials: true },
+        config,
       );
 
       if (data.success) {
