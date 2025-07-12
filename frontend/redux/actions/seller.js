@@ -30,9 +30,18 @@ export const getSeller = () => async (dispatch) => {
 
     const { data } = await axios.get(`${server}/shop/getSeller`, config)
 
+    console.log("getSeller: Received response, has token:", data.token ? "Yes" : "No");
+
     // Always store/update seller token if provided in response
     if (data.token) {
       localStorage.setItem("seller_token", data.token);
+      console.log("getSeller: Updated seller_token in localStorage");
+    }
+
+    // Store seller data in localStorage
+    if (data.seller) {
+      localStorage.setItem("sellerData", JSON.stringify(data.seller));
+      console.log("getSeller: Updated sellerData in localStorage");
     }
 
     dispatch(loadSellerSuccess(data.seller))

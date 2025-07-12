@@ -64,14 +64,23 @@ function ShopLogin() {
       )
 
       if (res.data.success) {
+        console.log("Shop login successful, received token:", res.data.token ? "Yes" : "No");
+        console.log("Shop data received:", res.data.shop ? "Yes" : "No");
+        
         // Store token in localStorage as a backup
         if (res.data.token) {
           localStorage.setItem("seller_token", res.data.token)
+          console.log("Stored seller_token in localStorage:", res.data.token.substring(0, 20) + "...");
+        } else {
+          console.error("No seller token received from backend!");
         }
 
         // Store seller data in localStorage
         if (res.data.shop) {
           localStorage.setItem("sellerData", JSON.stringify(res.data.shop))
+          console.log("Stored sellerData in localStorage");
+        } else {
+          console.error("No shop data received from backend!");
         }
 
         dispatch(loadSellerSuccess(res.data.shop))

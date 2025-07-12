@@ -42,17 +42,22 @@ export const loadUser = () => async (dispatch) => {
 
     const { data } = await axios.get(`${server}/user/getuser`, config);
 
+    console.log("loadUser: Received response, has token:", data.token ? "Yes" : "No");
+
     // Always store/update token if provided in response
     if (data.token) {
       localStorage.setItem("token", data.token);
+      console.log("loadUser: Updated token in localStorage");
     }
 
     // Store user data using the persistence service
     if (data.user && data.token) {
       setAuthToStorage(data.token, data.user);
+      console.log("loadUser: Stored auth data using persistence service");
     } else if (data.user) {
       // If no token returned, keep existing token but update user data
       localStorage.setItem("userData", JSON.stringify(data.user));
+      console.log("loadUser: Updated userData in localStorage");
     }
 
     dispatch(loadUserSuccess(data.user));
@@ -109,9 +114,18 @@ export const loadSeller = () => async (dispatch) => {
 
     const { data } = await axios.get(`${server}/shop/getSeller`, config);
 
+    console.log("loadSeller: Received response, has token:", data.token ? "Yes" : "No");
+
     // Always store/update seller token if provided in response
     if (data.token) {
       localStorage.setItem("seller_token", data.token);
+      console.log("loadSeller: Updated seller_token in localStorage");
+    }
+
+    // Store seller data in localStorage
+    if (data.seller) {
+      localStorage.setItem("sellerData", JSON.stringify(data.seller));
+      console.log("loadSeller: Updated sellerData in localStorage");
     }
 
     dispatch(loadSellerSuccess(data.seller));

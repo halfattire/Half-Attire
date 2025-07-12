@@ -23,10 +23,15 @@ export default function AuthInitializer({ children }) {
 
     const initializeAuth = () => {
       try {
+        console.log("AuthInitializer: Starting authentication initialization...");
+        
         // Initialize user authentication
         if (!isAuthenticated || !user) {
           const userData = localStorage.getItem('userData');
           const userToken = getUserToken();
+          
+          console.log("AuthInitializer: User token exists:", userToken ? "Yes" : "No");
+          console.log("AuthInitializer: User data exists:", userData ? "Yes" : "No");
           
           if (userData && userToken) {
             try {
@@ -34,8 +39,10 @@ export default function AuthInitializer({ children }) {
               
               // Validate user data structure
               if (parsedUserData && parsedUserData._id && parsedUserData.email) {
+                console.log("AuthInitializer: Restoring user authentication for:", parsedUserData.email);
                 dispatch(loadUserSuccess(parsedUserData));
               } else {
+                console.log("AuthInitializer: Invalid user data structure, clearing...");
                 localStorage.removeItem('userData');
                 localStorage.removeItem('token');
               }
@@ -46,6 +53,8 @@ export default function AuthInitializer({ children }) {
               localStorage.removeItem('token');
             }
           }
+        } else {
+          console.log("AuthInitializer: User already authenticated");
         }
 
         // Initialize seller authentication
@@ -53,14 +62,19 @@ export default function AuthInitializer({ children }) {
           const sellerData = localStorage.getItem('sellerData');
           const sellerToken = getSellerToken();
           
+          console.log("AuthInitializer: Seller token exists:", sellerToken ? "Yes" : "No");
+          console.log("AuthInitializer: Seller data exists:", sellerData ? "Yes" : "No");
+          
           if (sellerData && sellerToken) {
             try {
               const parsedSellerData = JSON.parse(sellerData);
               
               // Validate seller data structure
               if (parsedSellerData && parsedSellerData._id && parsedSellerData.email) {
+                console.log("AuthInitializer: Restoring seller authentication for:", parsedSellerData.email);
                 dispatch(loadSellerSuccess(parsedSellerData));
               } else {
+                console.log("AuthInitializer: Invalid seller data structure, clearing...");
                 localStorage.removeItem('sellerData');
                 localStorage.removeItem('seller_token');
               }
@@ -71,8 +85,11 @@ export default function AuthInitializer({ children }) {
               localStorage.removeItem('seller_token');
             }
           }
+        } else {
+          console.log("AuthInitializer: Seller already authenticated");
         }
 
+        console.log("AuthInitializer: Authentication initialization completed");
         setIsInitialized(true);
       } catch (error) {
         console.error('Error during auth initialization:', error);

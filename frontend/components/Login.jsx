@@ -88,9 +88,20 @@ export default function Login() {
       })
 
       if (res.data.success) {
+        console.log("Google login successful, received token:", res.data.token ? "Yes" : "No");
+        
         // Store authentication data using the persistence service
-        localStorage.setItem("userData", JSON.stringify(res.data.user))
-        localStorage.setItem("token", res.data.token)
+        if (res.data.user) {
+          localStorage.setItem("userData", JSON.stringify(res.data.user))
+          console.log("Stored userData from Google login in localStorage");
+        }
+        
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token)
+          console.log("Stored token from Google login in localStorage:", res.data.token.substring(0, 20) + "...");
+        } else {
+          console.error("No token received from Google login backend!");
+        }
 
         dispatch(loadUserSuccess(res.data.user))
         toast.success("Successfully signed in with Google!")
@@ -127,9 +138,20 @@ export default function Login() {
       const res = await axios.post(`${server}/user/login`, { email, password, rememberMe }, { withCredentials: true })
 
       if (res.data.success) {
+        console.log("Login successful, received token:", res.data.token ? "Yes" : "No");
+        
         // Store authentication data using the persistence service
-        localStorage.setItem("userData", JSON.stringify(res.data.user))
-        localStorage.setItem("token", res.data.token)
+        if (res.data.user) {
+          localStorage.setItem("userData", JSON.stringify(res.data.user))
+          console.log("Stored userData in localStorage");
+        }
+        
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token)
+          console.log("Stored token in localStorage:", res.data.token.substring(0, 20) + "...");
+        } else {
+          console.error("No token received from backend!");
+        }
 
         dispatch(loadUserSuccess(res.data.user))
 

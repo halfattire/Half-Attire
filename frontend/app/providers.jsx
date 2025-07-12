@@ -8,6 +8,7 @@ import { loadSeller } from "@/redux/actions/user";
 import { loadUserSuccess } from "@/redux/reducers/user";
 import { getAllProducts } from "@/redux/actions/product";
 import { getAllEvents } from "@/redux/actions/event";
+import { setupAxiosInterceptors } from "@/lib/axios-interceptors";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { server } from "@/lib/server";
@@ -33,20 +34,27 @@ export function Providers({ children }) {
   // }
 
   useEffect(() => {
+    // Initialize axios interceptors first
+    setupAxiosInterceptors();
+    console.log("Axios interceptors initialized");
+    
     // Load application data
     const loadAppData = async () => {
       try {
+        console.log("Loading application data...");
         store.dispatch(getAllProducts());
         store.dispatch(getAllEvents());
         
         // Load seller authentication if seller token exists
         const sellerToken = localStorage.getItem("seller_token");
+        console.log("Seller token exists:", sellerToken ? "Yes" : "No");
         if (sellerToken) {
           store.dispatch(loadSeller());
         }
         
         // Stripe API key loading commented out
         // await getStripeApiKey();
+        console.log("Application data loading completed");
       } catch (error) {
         console.error("Error loading app data:", error);
       }
