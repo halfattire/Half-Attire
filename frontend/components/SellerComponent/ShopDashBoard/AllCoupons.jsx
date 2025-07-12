@@ -14,9 +14,7 @@ import { toast } from "react-toastify"
 function AllCoupons() {
   const { products } = useSelector((state) => state.products)
   const { seller } = useSelector((state) => state.seller)
-
   const dispatch = useDispatch()
-
   const [modalOpen, setModalOpen] = useState(false)
   const [name, setName] = useState("")
   const [value, setValue] = useState("")
@@ -25,6 +23,18 @@ function AllCoupons() {
   const [maxAmount, setMaxAmount] = useState("")
   const [selectedProducts, setSelectedProducts] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkIsMobile()
+    window.addEventListener("resize", checkIsMobile)
+
+    return () => window.removeEventListener("resize", checkIsMobile)
+  }, [])
 
   useEffect(() => {
     setIsLoading(true)
@@ -60,7 +70,6 @@ function AllCoupons() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     try {
       await axios.post(
         `${server}/couponscode/create-coupon`,
@@ -94,34 +103,82 @@ function AllCoupons() {
     }
   }
 
-  const columns = [
-    { field: "id", headerName: "Id", minWidth: 150, flex: 0.7 },
+  // Mobile optimized columns
+  const mobileColumns = [
+    {
+      field: "name",
+      headerName: "Coupon Code",
+      minWidth: 100,
+      flex: 1,
+      renderCell: (params) => <div className="text-xs font-medium break-words overflow-hidden">{params.value}</div>,
+    },
+    {
+      field: "price",
+      headerName: "Value",
+      minWidth: 60,
+      flex: 0.5,
+      valueGetter: (params) => (params.row && params.row.price !== undefined ? `${params.row.price}%` : "0%"),
+      renderCell: (params) => <div className="text-xs font-semibold text-green-600">{params.value}</div>,
+    },
+    {
+      field: "Delete",
+      flex: 0.3,
+      minWidth: 40,
+      headerName: "",
+      sortable: false,
+      renderCell: (params) => (
+        <Button size="small" className="min-w-0 p-1" onClick={() => handleDelete(params.id)} title="Delete Coupon">
+          <AiOutlineDelete size={14} className="text-red-500" />
+        </Button>
+      ),
+    },
+  ]
+
+  // Desktop columns
+  const desktopColumns = [
+    {
+      field: "id",
+      headerName: "Id",
+      minWidth: 150,
+      flex: 0.7,
+      renderCell: (params) => <div className="font-medium text-gray-600 truncate">#{params.value.slice(-8)}</div>,
+    },
     {
       field: "name",
       headerName: "Coupon Code",
       minWidth: 180,
       flex: 1,
+      renderCell: (params) => <div className="font-medium text-blue-600 break-words">{params.value}</div>,
     },
     {
       field: "price",
-      headerName: "Value",
-      minWidth: 100,
+      headerName: "Discount Value",
+      minWidth: 130,
       flex: 0.6,
       valueGetter: (params) => (params.row && params.row.price !== undefined ? `${params.row.price} %` : "0 %"),
+      renderCell: (params) => <div className="font-semibold text-green-600">{params.value}</div>,
     },
     {
       field: "Delete",
       flex: 0.5,
-      minWidth: 100,
-      headerName: "Delete",
+      minWidth: 120,
+      headerName: "Action",
       sortable: false,
       renderCell: (params) => (
-        <Button onClick={() => handleDelete(params.id)}>
-          <AiOutlineDelete size={20} />
+        <Button
+          variant="outlined"
+          size="small"
+          color="error"
+          onClick={() => handleDelete(params.id)}
+          startIcon={<AiOutlineDelete size={16} />}
+        >
+          Delete
         </Button>
       ),
     },
   ]
+
+  const columns = isMobile ? mobileColumns : desktopColumns
 
   const rows = coupons.map((item) => ({
     id: item._id,
@@ -133,40 +190,80 @@ function AllCoupons() {
     <Loader />
   ) : (
     <>
-      <div className="relative">
-        <div className="absolute right-0 top-4">
-          <Button variant="contained" className="font-semibold" onClick={() => setModalOpen(true)}>
-            Create Coupon Code
+      <div className="relative mb-4">
+        <div className="flex justify-end px-4 pt-4">
+          <Button
+            variant="contained"
+            className="font-semibold text-sm sm:text-base"
+            onClick={() => setModalOpen(true)}
+            size={isMobile ? "small" : "medium"}
+          >
+            {isMobile ? "Create" : "Create Coupon Code"}
           </Button>
         </div>
       </div>
-      <div className="mx-4 mt-16 w-full overflow-hidden bg-white pt-1">
-        <Box sx={{ height: { xs: 300, sm: 400 }, width: "100%" }} className="overflow-auto">
-          <DataGrid rows={rows} columns={columns} pageSize={10} disableSelectionOnClick autoHeight />
-        </Box>
+      <div className="mx-2 sm:mx-4 w-full overflow-hidden bg-white pt-1">
+        <div className="coupon-table-container">
+          <Box sx={{ height: { xs: 350, sm: 400 }, width: "100%" }} className="overflow-auto">
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              pageSize={isMobile ? 5 : 10}
+              disableSelectionOnClick
+              autoHeight={false}
+              className="coupon-data-grid"
+              sx={{
+                "& .MuiDataGrid-root": {
+                  fontSize: isMobile ? "0.75rem" : "0.875rem",
+                },
+                "& .MuiDataGrid-cell": {
+                  padding: isMobile ? "4px 6px" : "8px 16px",
+                  fontSize: isMobile ? "0.75rem" : "0.875rem",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal",
+                  lineHeight: "1.2",
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#f8fafc",
+                  fontSize: isMobile ? "0.75rem" : "0.875rem",
+                  fontWeight: 600,
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: isMobile ? "40px" : "52px",
+                },
+                "& .MuiDataGrid-row:hover": {
+                  backgroundColor: "#f1f5f9",
+                },
+                "& .MuiDataGrid-virtualScroller": {
+                  overflowX: "auto",
+                },
+              }}
+            />
+          </Box>
+        </div>
       </div>
       {modalOpen && (
         <div
           id="authentication-modal"
           tabIndex="-1"
           aria-hidden="true"
-          className="fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-gray-800 bg-opacity-80"
+          className="fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-gray-800 bg-opacity-80 p-4"
         >
-          <div className="relative flex w-full max-w-md items-center justify-center p-4">
+          <div className="relative flex w-full max-w-md items-center justify-center">
             <div className="custom-scrollbar relative max-h-[90vh] w-full overflow-y-auto rounded-lg bg-[#1e2837] shadow-xl">
-              <div className="flex items-center justify-between rounded-t border-b border-gray-700 p-5">
-                <h3 className="text-xl font-semibold text-white">Create Coupon Code</h3>
+              <div className="flex items-center justify-between rounded-t border-b border-gray-700 p-4 sm:p-5">
+                <h3 className="text-lg sm:text-xl font-semibold text-white">Create Coupon Code</h3>
                 <button
                   type="button"
                   className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
                   onClick={() => setModalOpen(false)}
                 >
-                  <IoClose size={24} />
+                  <IoClose size={20} />
                   <span className="sr-only">Close modal</span>
                 </button>
               </div>
-              <div className="p-6">
-                <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="p-4 sm:p-6">
+                <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
                   <div>
                     <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-300">
                       Coupon Name
@@ -178,7 +275,7 @@ function AllCoupons() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter your coupon code name..."
-                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-3 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -192,7 +289,7 @@ function AllCoupons() {
                       required
                       onChange={(e) => setValue(e.target.value)}
                       placeholder="Enter your coupon code value..."
-                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-3 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -205,7 +302,7 @@ function AllCoupons() {
                       value={minAmount}
                       onChange={(e) => setMinAmount(e.target.value)}
                       placeholder="Enter your coupon code min amount..."
-                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-3 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -218,7 +315,7 @@ function AllCoupons() {
                       value={maxAmount}
                       onChange={(e) => setMaxAmount(e.target.value)}
                       placeholder="Enter your coupon code max amount..."
-                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-3 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -226,7 +323,7 @@ function AllCoupons() {
                       Select Product
                     </label>
                     <select
-                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-3 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                       value={selectedProducts}
                       onChange={(e) => setSelectedProducts(e.target.value)}
                     >
@@ -244,10 +341,12 @@ function AllCoupons() {
                       variant="contained"
                       color="primary"
                       type="submit"
+                      size={isMobile ? "small" : "medium"}
                       sx={{
                         textTransform: "none",
                         fontWeight: "medium",
-                        padding: "8px 16px",
+                        padding: isMobile ? "6px 12px" : "8px 16px",
+                        fontSize: isMobile ? "0.875rem" : "1rem",
                       }}
                     >
                       Create Coupon

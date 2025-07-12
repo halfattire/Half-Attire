@@ -4,15 +4,15 @@ import DashSidebar from "../../components/SellerComponent/ShopDashBoard/DashSide
 
 function ShopCoupounsCode() {
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <DashBoardHeader />
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         {/* sidebar */}
-        <div>
+        <div className="lg:block">
           <DashSidebar active={9} />
         </div>
         {/* create coupouns code */}
-        <div className="w-full max-w-[950px] flex-1">
+        <div className="w-full max-w-none lg:max-w-[950px] flex-1 px-2 lg:px-4">
           <AllCoupons />
         </div>
       </div>

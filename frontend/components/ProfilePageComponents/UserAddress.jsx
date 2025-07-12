@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Country, City } from "country-state-city";
-import { deleteUserAddress, updateUserAddress } from "../../redux/actions/user";
+import { deleteUserAddress, updateUserAddress, loadUser } from "../../redux/actions/user";
 
 function UserAddress() {
   const [open, setOpen] = useState(false);
@@ -16,9 +16,26 @@ function UserAddress() {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
   const [addressType, setAddressType] = useState("");
-  const { user } = useSelector((state) => state.user);
+  const { user, addressloading, error } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
+
+  // Debug effect to see state changes  
+  useEffect(() => {
+    console.log("UserAddress state changed:", { 
+      userAddressesCount: user?.addresses?.length, 
+      addressloading, 
+      error,
+      userObject: user // Add this to see the full user object
+    });
+    if (user?.addresses) {
+      console.log("Current addresses:", user.addresses.map(addr => ({ 
+        id: addr._id, 
+        type: addr.addressType, 
+        address1: addr.address1 
+      })));
+    }
+  }, [user?.addresses?.length, addressloading, error, user]);
 
   const addressTypeData = [
     { name: "default" },
@@ -26,37 +43,53 @@ function UserAddress() {
     { name: "Office" },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (addressType === "" || country === "" || city === "") {
       toast.error("Please fill all the fields!");
     } else {
-      dispatch(
-        updateUserAddress(
-          country,
-          city,
-          address1,
-          address2,
-          addressType,
-          zipCode,
-        ),
-      );
-      toast.success("Address added successfully!");
-      setOpen(false);
-      setCountry("");
-      setCity("");
-      setAddress1();
-      setAddress2();
-      setAddressType();
-      setZipCode();
+      try {
+        await dispatch(
+          updateUserAddress(
+            country,
+            city,
+            address1,
+            address2,
+            addressType,
+            zipCode,
+          ),
+        );
+        
+        // Reload user data to ensure the address list is updated
+        await dispatch(loadUser());
+        
+        toast.success("Address added successfully!");
+        setOpen(false);
+        setCountry("");
+        setCity("");
+        setAddress1("");
+        setAddress2("");
+        setAddressType("");
+        setZipCode("");
+      } catch (error) {
+        toast.error("Failed to add address. Please try again.");
+      }
     }
   };
 
-  const handleDelete = (item) => {
-    const id = item._id;
-    dispatch(deleteUserAddress(id));
-    toast.info("Address deleted successfully!");
+  const handleDelete = async (item) => {
+    try {
+      const id = item._id;
+      await dispatch(deleteUserAddress(id));
+      
+      // Reload user data to ensure the address list is updated
+      await dispatch(loadUser());
+      
+      toast.info("Address deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete address. Please try again.");
+    }
   };
 
   return (
@@ -64,10 +97,11 @@ function UserAddress() {
       <div className="flex w-full items-center justify-between pb-2">
         <h1 className="text-xl font-semibold">My Addresses</h1>
         <button
-          className="rounded-md border-2 border-blue-600 bg-transparent px-6 py-2 text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-md border-2 border-blue-600 bg-transparent px-6 py-2 text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           onClick={() => setOpen(true)}
+          disabled={addressloading}
         >
-          Add New
+          {addressloading ? "Loading..." : "Add New"}
         </button>
       </div>
       <br />
@@ -245,8 +279,13 @@ function UserAddress() {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <Button variant="contained" color="primary" type="submit">
-                      Add Address
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      type="submit"
+                      disabled={addressloading}
+                    >
+                      {addressloading ? "Adding..." : "Add Address"}
                     </Button>
                   </div>
                 </form>

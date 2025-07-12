@@ -140,12 +140,15 @@ export const updateUserAddress = (country, city, address1, address2, addressType
     }
 
     dispatch(updateUserAddressSuccess({ user: data.user }));
+    return { success: true, user: data.user };
   } catch (error) {
     if (error.response?.status === 401) {
       dispatch({ type: "LOGOUT_SUCCESS" });
       localStorage.removeItem("userData");
     }
-    dispatch(updateUserAddressFailed(error.response?.data?.message || "Failed to update address"));
+    const errorMessage = error.response?.data?.message || "Failed to update address";
+    dispatch(updateUserAddressFailed(errorMessage));
+    throw new Error(errorMessage);
   }
 };
 
@@ -161,12 +164,15 @@ export const deleteUserAddress = (id) => async (dispatch) => {
     }
 
     dispatch(deleteUserAddressSuccess({ user: data.user }));
+    return { success: true, user: data.user };
   } catch (error) {
     if (error.response?.status === 401) {
       dispatch({ type: "LOGOUT_SUCCESS" });
       localStorage.removeItem("userData");
     }
-    dispatch(deleteUserAddressFailed(error.response?.data?.message || "Failed to delete address"));
+    const errorMessage = error.response?.data?.message || "Failed to delete address";
+    dispatch(deleteUserAddressFailed(errorMessage));
+    throw new Error(errorMessage);
   }
 };
 
