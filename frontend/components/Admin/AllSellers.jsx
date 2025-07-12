@@ -85,38 +85,72 @@ const AllSellers = () => {
     });
 
   return (
-    <div className="w-full flex justify-center pt-5">
-      <div className="w-[97%]">
-        <h5 className="text-[22px] pb-2 font-Poppins">All Seller</h5>
-        <DataGrid
-          rows={row}
-          columns={columns}
-          pageSize={4}
-          disableSelectionOnClick
-          autoHeight
-        />
+    <div className="w-full p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">All Sellers</h1>
+          <p className="text-xs sm:text-sm text-gray-600">Manage all registered sellers</p>
+        </div>
+        
+        <div className="p-3 sm:p-4 lg:p-6">
+          <div className="overflow-x-auto">
+            <DataGrid
+              rows={row}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 25 },
+                },
+              }}
+              pageSizeOptions={[10, 25, 50]}
+              disableRowSelectionOnClick
+              autoHeight
+              sx={{
+                border: "none",
+                minWidth: "800px", // Prevent table from getting too cramped
+                "& .MuiDataGrid-cell": {
+                  borderBottom: "1px solid #f3f4f6",
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" }
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#f9fafb",
+                  borderBottom: "1px solid #e5e7eb",
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" }
+                },
+              }}
+            />
+          </div>
+        </div>
       </div>
+      
       {open && (
-        <div className="w-full fixed top-0 left-0 z-[999] bg-[#00000039] flex items-center justify-center h-screen">
-          <div className="w-[95%] 800px:w-[40%] min-h-[20vh] bg-white rounded shadow p-5">
-            <div className="w-full flex justify-end cursor-pointer">
-              <RxCross1 size={25} onClick={() => setOpen(false)} />
-            </div>
-            <h3 className="text-[25px] text-center py-5 font-Poppins text-[#000000cb]">
-              Are you sure you wanna delete this user?
-            </h3>
-            <div className="w-full flex items-center justify-center">
-              <div
-                className={`${styles.button} text-white text-[18px] !h-[42px] mr-4`}
-                onClick={() => setOpen(false)}
-              >
-                cancel
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-lg">
+            <div className="p-4 sm:p-6">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <RxCross1 size={20} />
+                </button>
               </div>
-              <div
-                className={`${styles.button} text-white text-[18px] !h-[42px] ml-4`}
-                onClick={() => handleDelete(userId)}
-              >
-                confirm
+              <h3 className="text-lg sm:text-xl font-semibold text-center text-gray-900 mb-6">
+                Are you sure you want to delete this seller?
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                  onClick={() => handleDelete(userId)}
+                >
+                  Confirm Delete
+                </button>
               </div>
             </div>
           </div>

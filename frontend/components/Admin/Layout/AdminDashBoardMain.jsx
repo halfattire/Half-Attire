@@ -178,12 +178,12 @@ const AdminDashboardMain = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="w-full p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-2xl font-bold text-white">Admin Dashboard</h3>
-            <p className="text-gray-400 text-sm">Welcome, {user?.name}</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="w-full p-3 sm:p-4 lg:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-4">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
+            <h3 className="text-xl sm:text-2xl font-bold text-white">Admin Dashboard</h3>
+            <p className="text-gray-300 text-xs sm:text-sm">Welcome, {user?.name}</p>
             <p className="text-yellow-400 text-xs mt-1">
               Loaded {statistics.totalOrders} orders • Last updated: {lastRefresh.toLocaleTimeString()}
             </p>
@@ -191,51 +191,52 @@ const AdminDashboardMain = () => {
           <button
             onClick={handleRefresh}
             disabled={adminOrderLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm shadow-lg"
           >
             <MdRefresh className={adminOrderLoading ? "animate-spin" : ""} />
-            Refresh Data
+            <span className="hidden sm:inline">Refresh Data</span>
+            <span className="sm:hidden">Refresh</span>
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-3 rounded-lg mb-4 sm:mb-6 text-sm shadow-md">
             <strong>Error:</strong> {error}
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="flex items-center">
-              <AiOutlineMoneyCollect size={30} className="mr-3 text-green-600" />
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">Total Earning</h3>
-                <p className="text-2xl font-bold text-green-600">PKR {statistics.adminBalance}</p>
-                <p className="text-sm text-gray-500">10% commission on all orders</p>
+              <AiOutlineMoneyCollect size={24} className="mr-3 text-green-600 sm:text-[30px]" />
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm sm:text-lg font-medium text-gray-900 truncate">Total Earning</h3>
+                <p className="text-lg sm:text-2xl font-bold text-green-600">PKR {statistics.adminBalance}</p>
+                <p className="text-xs sm:text-sm text-gray-500">10% commission on all orders</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="flex items-center">
-              <FaStore size={30} className="mr-3 text-blue-600" />
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">All Sellers</h3>
-                <p className="text-2xl font-bold text-blue-600">{statistics.totalSellers}</p>
-                <Link href="/admin/sellers" className="text-sm text-blue-600 hover:underline">
+              <FaStore size={24} className="mr-3 text-blue-600 sm:text-[30px]" />
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm sm:text-lg font-medium text-gray-900 truncate">All Sellers</h3>
+                <p className="text-lg sm:text-2xl font-bold text-blue-600">{statistics.totalSellers}</p>
+                <Link href="/admin/sellers" className="text-xs sm:text-sm text-blue-600 hover:underline">
                   View Sellers →
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 sm:col-span-2 lg:col-span-1 border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="flex items-center">
-              <MdBorderClear size={30} className="mr-3 text-purple-600" />
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">All Orders</h3>
-                <p className="text-2xl font-bold text-purple-600">{statistics.totalOrders}</p>
-                <Link href="/admin/orders" className="text-sm text-purple-600 hover:underline">
+              <MdBorderClear size={24} className="mr-3 text-purple-600 sm:text-[30px]" />
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm sm:text-lg font-medium text-gray-900 truncate">All Orders</h3>
+                <p className="text-lg sm:text-2xl font-bold text-purple-600">{statistics.totalOrders}</p>
+                <Link href="/admin/orders" className="text-xs sm:text-sm text-purple-600 hover:underline">
                   View Orders →
                 </Link>
               </div>
@@ -243,76 +244,82 @@ const AdminDashboardMain = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status Overview</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-green-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-green-600">{statistics.deliveredCount}</p>
-              <p className="text-gray-600">Delivered Orders</p>
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Order Status Overview</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center border border-green-100">
+              <p className="text-xl sm:text-2xl font-bold text-green-600">{statistics.deliveredCount}</p>
+              <p className="text-sm sm:text-base text-gray-600">Delivered Orders</p>
             </div>
-            <div className="bg-yellow-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-yellow-600">{statistics.processingCount}</p>
-              <p className="text-gray-600">Processing Orders</p>
+            <div className="bg-yellow-50 rounded-xl p-3 sm:p-4 text-center border border-yellow-100">
+              <p className="text-xl sm:text-2xl font-bold text-yellow-600">{statistics.processingCount}</p>
+              <p className="text-sm sm:text-base text-gray-600">Processing Orders</p>
             </div>
-            <div className="bg-blue-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-blue-600">{statistics.otherStatusCount}</p>
-              <p className="text-gray-600">Other Status</p>
+            <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center sm:col-span-2 lg:col-span-1 border border-blue-100">
+              <p className="text-xl sm:text-2xl font-bold text-blue-600">{statistics.otherStatusCount}</p>
+              <p className="text-sm sm:text-base text-gray-600">Other Status</p>
               <p className="text-xs text-gray-500">(Shipped, Cancelled, etc.)</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md">
-          <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Latest Orders</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Latest Orders</h2>
+              <p className="text-xs sm:text-sm text-gray-500">
                 Total: {statistics.totalOrders} orders • Updated: {lastRefresh.toLocaleTimeString()}
               </p>
             </div>
             <Link href="/admin/orders">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                View All Orders
+              <button className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                <span className="hidden sm:inline">View All Orders</span>
+                <span className="sm:hidden">View All</span>
               </button>
             </Link>
           </div>
 
-          <div className="p-6">
+          <div className="p-3 sm:p-6">
             {tableData.length > 0 ? (
-              <DataGrid
-                rows={tableData}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: { pageSize: 10 },
-                  },
-                }}
-                pageSizeOptions={[5, 10, 25]} 
-                disableRowSelectionOnClick
-                autoHeight
-                sx={{
-                  border: "none",
-                  "& .MuiDataGrid-cell": {
-                    borderBottom: "1px solid #f3f4f6",
-                  },
-                  "& .MuiDataGrid-columnHeaders": {
-                    backgroundColor: "#f9fafb",
-                    borderBottom: "1px solid #e5e7eb",
-                  },
-                }}
-              />
+              <div className="overflow-x-auto">
+                <DataGrid
+                  rows={tableData}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 10 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10, 25]} 
+                  disableRowSelectionOnClick
+                  autoHeight
+                  sx={{
+                    border: "none",
+                    minWidth: "600px", // Ensure table doesn't get too cramped
+                    "& .MuiDataGrid-cell": {
+                      borderBottom: "1px solid #f3f4f6",
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" }
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      backgroundColor: "#f9fafb",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" }
+                    },
+                  }}
+                />
+              </div>
             ) : (
-              <div className="text-center py-12">
-                <MdBorderClear className="mx-auto text-gray-400 mb-4" size={48} />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
-                <p className="text-gray-600 mb-4">
+              <div className="text-center py-8 sm:py-12">
+                <MdBorderClear className="mx-auto text-gray-400 mb-4" size={32} />
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No orders found</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4 px-4">
                   {error
                     ? "There was an error loading orders"
                     : "Orders will appear here once customers start purchasing"}
                 </p>
                 <button
                   onClick={handleRefresh}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                 >
                   {error ? "Retry" : "Check for Orders"}
                 </button>

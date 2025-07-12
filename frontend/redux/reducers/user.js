@@ -89,6 +89,16 @@ const userSlice = createSlice({
     clearErrors: (state) => {
       state.error = null;
     },
+
+    // Logout
+    logoutSuccess: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+      state.error = null;
+      state.successMessage = null;
+      state.adminUsers = [];
+    },
   },
 });
 
@@ -109,6 +119,7 @@ export const {
   adminAllUsersSuccess,
   adminAllUsersFailed,
   clearErrors,
+  logoutSuccess,
 } = userSlice.actions;
 
 export default userSlice.reducer;

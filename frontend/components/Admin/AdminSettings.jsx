@@ -148,54 +148,54 @@ const AdminSettings = () => {
   ]
 
   const renderProfileSettings = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Full Name
           </label>
           <input
             type="text"
             value={settings.profile.name}
             onChange={(e) => handleInputChange("profile", "name", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             placeholder="Enter your full name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Email Address
           </label>
           <input
             type="email"
             value={settings.profile.email}
             disabled
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed text-sm"
             placeholder="Email cannot be changed"
           />
           <p className="text-xs text-gray-500 mt-1">Email cannot be modified for security reasons</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Phone Number
           </label>
           <input
             type="tel"
             value={settings.profile.phoneNumber}
             onChange={(e) => handleInputChange("profile", "phoneNumber", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             placeholder="Enter your phone number"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Role
           </label>
           <input
             type="text"
             value={user?.role || "admin"}
             disabled
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed text-sm"
           />
           <p className="text-xs text-gray-500 mt-1">Role is system-defined and cannot be changed</p>
         </div>
@@ -204,15 +204,15 @@ const AdminSettings = () => {
   )
 
   const renderNotificationSettings = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Email Notifications</h3>
-        <p className="text-sm text-gray-600">Choose which notifications you want to receive via email.</p>
+        <h3 className="text-base sm:text-lg font-medium text-gray-900">Email Notifications</h3>
+        <p className="text-xs sm:text-sm text-gray-600">Choose which notifications you want to receive via email.</p>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="flex-1 min-w-0 mr-4">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 Email Notifications
               </label>
               <p className="text-xs text-gray-500">General email notifications</p>
@@ -221,13 +221,13 @@ const AdminSettings = () => {
               type="checkbox"
               checked={settings.notifications.emailNotifications}
               onChange={(e) => handleInputChange("notifications", "emailNotifications", e.target.checked)}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0"
             />
           </div>
           
           <div className="flex items-center justify-between">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="flex-1 min-w-0 mr-4">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 Order Notifications
               </label>
               <p className="text-xs text-gray-500">Notifications about new orders and order updates</p>
@@ -236,13 +236,13 @@ const AdminSettings = () => {
               type="checkbox"
               checked={settings.notifications.orderNotifications}
               onChange={(e) => handleInputChange("notifications", "orderNotifications", e.target.checked)}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0"
             />
           </div>
           
           <div className="flex items-center justify-between">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="flex-1 min-w-0 mr-4">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 System Notifications
               </label>
               <p className="text-xs text-gray-500">Important system updates and maintenance notices</p>
@@ -251,7 +251,7 @@ const AdminSettings = () => {
               type="checkbox"
               checked={settings.notifications.systemNotifications}
               onChange={(e) => handleInputChange("notifications", "systemNotifications", e.target.checked)}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0"
             />
           </div>
         </div>
@@ -260,17 +260,17 @@ const AdminSettings = () => {
   )
 
   const renderAppearanceSettings = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Theme
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4">
             <button
               type="button"
               onClick={() => handleInputChange("appearance", "theme", "light")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg border text-xs sm:text-sm ${
                 settings.appearance.theme === "light"
                   ? "bg-blue-50 border-blue-200 text-blue-700"
                   : "border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -281,7 +281,7 @@ const AdminSettings = () => {
             <button
               type="button"
               onClick={() => handleInputChange("appearance", "theme", "dark")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg border text-xs sm:text-sm ${
                 settings.appearance.theme === "dark"
                   ? "bg-blue-50 border-blue-200 text-blue-700"
                   : "border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -294,13 +294,13 @@ const AdminSettings = () => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Language
           </label>
           <select
             value={settings.appearance.language}
             onChange={(e) => handleInputChange("appearance", "language", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           >
             <option value="en">English</option>
             <option value="es">Spanish</option>
@@ -327,29 +327,35 @@ const AdminSettings = () => {
   }
 
   return (
-    <div className="w-full p-4 sm:p-6 bg-gray-50 min-h-screen">
+    <div className="w-full p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 sm:mb-6 gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-sm sm:text-base text-gray-600">Manage your admin panel preferences</p>
+          <p className="text-xs sm:text-sm text-gray-600">Manage your admin panel preferences</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
           <button
             onClick={handleResetSettings}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors text-sm"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors text-xs sm:text-sm justify-center"
           >
             <MdRestoreFromTrash />
-            Reset to Default
+            <span className="hidden sm:inline">Reset to Default</span>
+            <span className="sm:hidden">Reset</span>
           </button>
           <button
             onClick={handleSaveSettings}
             disabled={isLoading || !hasChanges || loading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-xs sm:text-sm justify-center"
           >
             <MdSave />
-            {isLoading ? "Saving..." : "Save Changes"}
+            {isLoading ? "Saving..." : (
+              <>
+                <span className="hidden sm:inline">Save Changes</span>
+                <span className="sm:hidden">Save</span>
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -365,14 +371,14 @@ const AdminSettings = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-2 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? "border-b-2 border-blue-500 text-blue-600 bg-white"
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
-                  <Icon className="text-lg" />
-                  {tab.label}
+                  <Icon className="text-sm sm:text-lg" />
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               )
             })}
@@ -380,17 +386,17 @@ const AdminSettings = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-4 sm:p-6">
+        <div className="p-3 sm:p-4 lg:p-6">
           {renderTabContent()}
         </div>
       </div>
 
       {/* Save Notice */}
       {hasChanges && (
-        <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-lg shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 sm:px-4 py-2 sm:py-3 rounded-lg shadow-lg z-50">
           <div className="flex items-center gap-2">
-            <MdNotifications />
-            <span className="text-sm">You have unsaved changes</span>
+            <MdNotifications className="text-sm sm:text-base" />
+            <span className="text-xs sm:text-sm">You have unsaved changes</span>
           </div>
         </div>
       )}

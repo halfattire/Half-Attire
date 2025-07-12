@@ -11,8 +11,14 @@ import { MdEmojiEvents } from "react-icons/md"
 import { MdOutlineSettings } from "react-icons/md"
 import { FaEnvelope } from "react-icons/fa"
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ onLinkClick }) => {
   const pathname = usePathname()
+
+  const handleLinkClick = () => {
+    if (onLinkClick) {
+      onLinkClick()
+    }
+  }
 
   const menuItems = [
     {
@@ -58,65 +64,67 @@ const AdminSidebar = () => {
       path: "/admin/newsletter",
     },
     {
+      id: 9,
+      title: "Withdraw Requests",
+      icon: CiMoneyBill,
+      path: "/admin/withdraw",
+    },
+    {
       id: 8,
       title: "Settings",
       icon: MdOutlineSettings,
       path: "/admin/settings",
     },
-    // {
-    //   id: 9,
-    //   title: "Withdraw Requests",
-    //   icon: CiMoneyBill,
-    //   path: "/admin/withdraw",
-    // },
+    
   ]
 
   return (
-    <div className="w-full h-[90vh] bg-gradient-to-b from-white to-gray-50/50 shadow-xl overflow-y-auto sticky top-0 left-0 z-10 border-r border-gray-100">
+    <div className="w-full h-full bg-white shadow-xl border-r border-gray-200 flex flex-col">
       {/* Header Section */}
-      <div className="p-6 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
+      <div className="p-4 sm:p-6 border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-            <MdOutlineSettings className="text-white text-xl" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+            <MdOutlineSettings className="text-white text-lg sm:text-xl" />
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Admin Panel</h2>
-            <p className="text-sm text-gray-500 font-medium">Management Dashboard</p>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight truncate">Admin Panel</h2>
+            <p className="text-xs sm:text-sm text-gray-500 font-medium truncate">Management Dashboard</p>
           </div>
         </div>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="mt-2 px-3 pb-6">
+      <nav className="flex-1 mt-2 px-2 sm:px-3 pb-6">
         <div className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.path
 
             return (
-              <Link key={item.id} href={item.path} className="block">
+              <Link key={item.id} href={item.path} className="block" onClick={handleLinkClick}>
                 <div
-                  className={`group relative flex items-center px-4 py-3.5 mx-1 rounded-xl transition-all duration-300 ease-in-out ${
+                  className={`group relative flex items-center px-3 sm:px-4 py-3 sm:py-3.5 mx-1 rounded-xl transition-all duration-300 ease-in-out ${
                     isActive
-                      ? "bg-gradient-to-r from-blue-50 to-blue-50/70 text-blue-700 shadow-sm border border-blue-100/50"
-                      : "text-gray-600 hover:bg-gray-50/80 hover:text-gray-900 hover:shadow-sm"
+                      ? "bg-blue-50 text-blue-700 shadow-md border border-blue-100"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:shadow-sm"
                   }`}
                 >
                   {/* Active indicator line */}
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-600 to-blue-700 rounded-r-full shadow-sm"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 sm:h-8 bg-gradient-to-b from-blue-600 to-blue-700 rounded-r-full shadow-sm"></div>
                   )}
 
                   {/* Icon */}
                   <div
-                    className={`flex-shrink-0 mr-4 ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"} transition-colors duration-200`}
+                    className={`flex-shrink-0 mr-3 sm:mr-4 ${isActive ? "text-blue-600" : "text-gray-500 group-hover:text-gray-700"} transition-colors duration-200`}
                   >
-                    <Icon size={22} />
+                    <Icon size={18} className="sm:hidden" />
+                    <Icon size={22} className="hidden sm:block" />
                   </div>
 
                   {/* Text */}
                   <span
-                    className={`font-semibold text-sm tracking-wide ${isActive ? "text-blue-700" : "text-gray-700 group-hover:text-gray-900"} transition-colors duration-200`}
+                    className={`font-semibold text-xs sm:text-sm tracking-wide truncate ${isActive ? "text-blue-700" : "text-gray-700 group-hover:text-gray-900"} transition-colors duration-200`}
                   >
                     {item.title}
                   </span>
@@ -124,13 +132,8 @@ const AdminSidebar = () => {
                   {/* Active dot indicator */}
                   {isActive && (
                     <div className="ml-auto flex items-center">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full shadow-sm animate-pulse"></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full shadow-sm animate-pulse"></div>
                     </div>
-                  )}
-
-                  {/* Hover effect */}
-                  {!isActive && (
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent to-gray-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   )}
                 </div>
               </Link>
@@ -138,9 +141,6 @@ const AdminSidebar = () => {
           })}
         </div>
       </nav>
-
-      {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-50/80 to-transparent pointer-events-none"></div>
     </div>
   )
 }

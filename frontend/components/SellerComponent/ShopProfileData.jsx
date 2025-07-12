@@ -6,11 +6,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllShopProducts } from "@/redux/actions/product";
+import { getAllShopEvents } from "@/redux/actions/event";
 import Ratings from "../Ratings";
 import moment from "moment";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Image from "next/image";
 import { backend_url } from "@/lib/server";
+import { getAvatarUrl, handleAvatarError } from "@/lib/utils/avatar";
+import SafeAvatar from "../SafeAvatar";
 
 const REVIEWS_PER_PAGE = 5;
 
@@ -22,10 +25,16 @@ function ShopProfileData({ isOwner }) {
   const dispatch = useDispatch();
   const [active, setActive] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     window.scrollTo(0, 0);
     dispatch(getAllShopProducts(id));
+    // Fetch shop events when component mounts
+    if (id) {
+      dispatch(getAllShopEvents(id));
+    }
   }, [id, dispatch]);
 
   const allReviews =
@@ -121,40 +130,31 @@ function ShopProfileData({ isOwner }) {
 
       {active === 3 && (
         <div className="w-full">
-          {paginatedReviews &&
+          {paginatedReviews && paginatedReviews.length > 0 ? (
             paginatedReviews.map((item, index) => (
               <div key={index} className="my-4 flex w-full border-b pb-4">
-                <Image
-                  src={
-                    item.user.avatar
-                      ? item.user.avatar.startsWith("http") 
-                        ? item.user.avatar 
-                        : `${backend_url}/${item.user.avatar}`
-                      : "/assets/fallback-avatar.png"
-                  }
-                  className="h-10 w-10 rounded-full object-cover"
+                <SafeAvatar
+                  src={item?.user?.avatar}
                   alt="User Avatar"
                   width={40}
                   height={40}
-                  onError={(e) => {
-                    e.target.src = "/assets/fallback-avatar.png";
-                  }}
+                  className="h-10 w-10 rounded-full object-cover"
                 />
-                <div className="pl-4">
+                <div className="pl-4 flex-1">
                   <div className="flex w-full items-center">
-                    <h1 className="pr-2 font-[600]">{item.user.name}</h1>
-                    <Ratings rating={item.rating} />
+                    <h1 className="pr-2 font-[600]">{item?.user?.name || "Anonymous"}</h1>
+                    <Ratings rating={item?.rating || 0} />
                   </div>
                   <p className="mt-1 font-[400] text-[#000000a7]">
-                    {item.comment}
+                    {item?.comment || "No comment provided"}
                   </p>
                   <p className="mt-1 text-[14px] text-[#000000a7]">
-                    {moment(item.createdAt).fromNow()}
+                    {isClient && item?.createdAt ? moment(item.createdAt).fromNow() : "Unknown date"}
                   </p>
                 </div>
               </div>
-            ))}
-          {allReviews && allReviews.length === 0 && (
+            ))
+          ) : (
             <h5 className="w-full py-5 text-center text-[18px]">
               No Reviews have for this shop!
             </h5>

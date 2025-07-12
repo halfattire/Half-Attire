@@ -28,8 +28,8 @@
                 <div className="flex items-start" key={index}>
                   {item.icon}
                   <div className="px-3">
-                    <h3 className="font-bold text-sm md:text-base">{item.title}</h3>
-                    <p className="text-xs md:text-sm">{item.description}</p>
+                    <h3 className="font-bold text-sm md:text-base text-gray-800">{item.title}</h3>
+                    <p className="text-xs md:text-sm text-gray-600">{item.description}</p>
                   </div>
                 </div>
               ))}
@@ -44,7 +44,7 @@
                 key={item.id}
                 onClick={() => handleSubmit(item)}
               >
-                <h5 className="text-[18px] leading-[1.3]">{item.title}</h5>
+                <h5 className="text-[18px] leading-[1.3] text-gray-800 font-semibold">{item.title}</h5>
                 <Image
                   src={item.image_Url}
                   alt={item.title}

@@ -13,8 +13,10 @@ import { addTocartAction, removeFromCartAction } from "../redux/actions/cart"
 import { addToWishlistAction, removeFromWishlistAction } from "../redux/actions/whishlist"
 import axios from "axios"
 import { toast } from "react-toastify"
+import SafeAvatar from "./SafeAvatar"
+import { calculateShopRating } from "../lib/utils/shopRating"
 
-function ProductDetail({ data }) {
+function ProductDetail({ data, isEvent = false }) {
   // Keep all existing state
   const [count, setCount] = useState(1)
   const [click, setClick] = useState(false)
@@ -184,15 +186,9 @@ function ProductDetail({ data }) {
 
   const productReviewsLength = products && products.reduce((acc, product) => acc + (product.reviews?.length || 0), 0)
 
-  const totalRatings =
-    products &&
-    products.reduce(
-      (acc, product) => acc + (product.reviews?.reduce((sum, review) => sum + (review.rating || 0), 0) || 0),
-      0,
-    )
-
-  const avg = totalRatings / productReviewsLength || 0
-  const averageRating = avg.toFixed(1)
+  // Enhanced shop rating calculation
+  const shopProducts = products ? products.filter(p => p.shopId === data?.shop?._id) : []
+  const shopRatingData = calculateShopRating(shopProducts)
 
   return (
     <div className="bg-white">
@@ -382,31 +378,29 @@ function ProductDetail({ data }) {
                   )}
                 </button>
 
-                {/* Keep existing shop info section unchanged */}
+                {/* Shop info section with fixed avatar */}
                 <div className="my-8 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-6">
-                  {/* <div className="flex items-center gap-2">
-                    <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                      <Image
-                        src={shop?.avatar 
-                          ? shop.avatar.startsWith("http") 
-                            ? shop.avatar 
-                            : `${backend_url}/${shop.avatar}` 
-                          : "/assets/placeholder.png"}
-                        className="rounded-full"
-                        alt={shop?.name || "Shop Avatar"}
-                        fill
-                        sizes="48px"
-                      />
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <SafeAvatar
+                      src={shop?.avatar}
+                      alt={shop?.name || "Shop Avatar"}
+                      width={48}
+                      height={48}
+                      className="h-12 w-12 rounded-full object-cover flex-shrink-0"
+                    />
                     <div>
                       <Link href={`/shop/preview/${data?.shop._id}`}>
-                        <h3 className="text-[15px] text-blue-400">{shop?.name || "Unknown Shop"}</h3>
+                        <h3 className="text-[15px] text-blue-400 hover:text-blue-600 font-medium">
+                          {shop?.name || "Unknown Shop"}
+                        </h3>
                       </Link>
-                      <h5 className="text-[15px]">{averageRating} Ratings</h5>
+                      <h5 className="text-[15px] text-gray-600">
+                        Shop Rating: {shopRatingData.displayRating}/5.0
+                      </h5>
                     </div>
-                  </div> */}
+                  </div>
                   <button
-                    className="my-3 flex items-center gap-2 hover:cursor-pointer rounded-md bg-indigo-800 px-5 py-3 text-white"
+                    className="my-3 flex items-center gap-2 hover:cursor-pointer rounded-md bg-indigo-800 hover:bg-indigo-900 px-5 py-3 text-white transition-colors"
                     onClick={handleMessageSubmit}
                   >
                     Send Message <AiOutlineMessage size={22} />
@@ -415,7 +409,7 @@ function ProductDetail({ data }) {
               </div>
             </div>
           </div>
-          <ProductDetailInfo data={data} />
+          <ProductDetailInfo data={data} isEvent={isEvent} />
         </div>
       ) : (
         <h1 className="p-6 text-center">Product not found!</h1>

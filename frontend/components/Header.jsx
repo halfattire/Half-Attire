@@ -18,7 +18,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { backend_url } from "../lib/server"
 import CartPopUp from "./CartPopUp"
 import WhishListPopUp from "./WhishListPopUp"
-import logo from "../public/assets/logo.jpeg"
+import logo from "../public/assets/logo1.png"
 import { logout } from "../redux/actions/user"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -117,262 +117,83 @@ function Header() {
 
   return (
     <>
-      <div className="container mx-auto px-4">
-        {/* top navbar section */}
-        <div className="relative my-[20px] hidden h-[35px] items-center justify-between md:flex">
-          <div>
-            <Link href="/">
-              <Image
-                src={logo || "/placeholder.svg"}
-                alt="Logo"
-                width={100}
-                height={10}
-                className="w-[80px] md:w-[100px]"
-              />
-            </Link>
-          </div>
-          {/* Search box */}
-          <div className="relative w-1/2">
-            <input
-              type="text"
-              placeholder="Search Products..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="block w-full rounded-lg border-2 border-blue-600 bg-gray-50 p-2 text-gray-900 focus:ring-blue-600"
-            />
-            <AiOutlineSearch size={30} className="absolute right-2 top-2 cursor-pointer" />
-            {searchTerm && searchData && (
-              <div className="absolute top-full z-10 mt-2 w-full overflow-y-auto bg-white p-4 shadow-lg">
-                {searchData.length === 0 ? (
-                  <div className="flex w-full items-start py-2">
-                    <h1>No products found</h1>
-                  </div>
-                ) : (
-                  searchData.map((item) => (
-                    <Link key={`${item._id}-${item.name}`} href={`/product/${item._id}`}>
-                      <div className="flex w-full items-start py-2 hover:bg-gray-100">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                          <Image
-                            src={`${backend_url}/${item?.images[0]}`}
-                            alt={item.name}
-                            width={40}
-                            height={40}
-                            className="mr-2 h-full w-full object-contain"
-                            unoptimized
-                          />
-                        </div>
-                        <h1 className="line-clamp-2">{item.name}</h1>
-                      </div>
-                    </Link>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-          {/* seller button */}
-          <div className="my-3 flex items-center gap-2 rounded-md bg-indigo-800 px-5 py-3 text-white">
-            <Link
-              href={user?.role === "admin" ? "/shop-login" : "#"}
-              onClick={(e) => {
-                if (!isAuthenticated) {
-                  e.preventDefault()
-                  toast.error("Please login first")
-                  router.push("/login")
-                } else if (user?.role !== "admin") {
-                  e.preventDefault()
-                  toast.error("Only admin users can access seller features")
-                }
-              }}
-              className={`flex items-center justify-center ${
-                user?.role === "admin" ? "text-[#fff]" : "text-gray-400 cursor-not-allowed"
-              }`}
-            >
-              <h1>Admin Panel</h1>
-              {user?.role !== "admin" && <IoIosArrowForward className="ml-1" />}
-            </Link>
-          </div>
-        </div>
-      </div>
-      {/* mobile navbar */}
-      <div className="sticky top-0 z-[250] bg-gray-100 pb-2 shadow-md md:hidden">
-        <div className="container mx-auto px-4 py-8 flex h-14 w-full items-center justify-between">
-          {/* mobile logo */}
-          <div>
-            <Link href="/">
-              <Image src={logo || "/placeholder.svg"} alt="Logo" width={80} height={40} className="w-[60px]" />
-            </Link>
-          </div>
-          {/* nav icons */}
-          <div>
-            <div className="flex items-center gap-4">
-              <div onClick={() => setOpenWhishlist(true)} className="relative cursor-pointer">
-                <AiOutlineHeart size={30} className="text-black" />
-                <span className="font-mono absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-[#3bc177] text-xs leading-tight text-white">
-                  {wishlist && wishlist.length}
-                </span>
-              </div>
-              <div onClick={() => setOpenCart(true)} className="relative cursor-pointer">
-                <AiOutlineShoppingCart size={30} className="text-black" />
-                <span className="font-mono absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-[#3bc177] text-xs leading-tight text-white">
-                  {cart ? cart.length : 0}
-                </span>
-              </div>
-              {/* Mobile User Menu */}
-              <div className="relative user-menu-container">
-                {isAuthenticated ? (
-                  <div className="flex-shrink-0 cursor-pointer">
-                    <Image
-                      src={getAvatarUrl() || "/placeholder.svg"}
-                      alt="User avatar"
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 rounded-full object-cover object-top"
-                      unoptimized
-                      onClick={() => setShowUserMenu(!showUserMenu)}
-                      onError={(e) => {
-                        e.target.src = "/assets/fallback-avatar.png"
-                      }}
-                    />
-                    {/* Mobile User Dropdown */}
-                    {showUserMenu && (
-                      <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
-                        <div className="py-1">
-                          <div className="px-4 py-2 border-b">
-                            <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                            <p className="text-sm text-gray-500 truncate">{user.email}</p>
-                          </div>
-                          <Link
-                            href="/profile"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setShowUserMenu(false)}
-                          >
-                            Profile Settings
-                          </Link>
-                          <button
-                            onClick={handleLogout}
-                            disabled={isLoggingOut}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50"
-                          >
-                            {isLoggingOut ? "Logging out..." : "Logout"}
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link href="/login">
-                    <CgProfile size={30} className="text-black" />
-                  </Link>
-                )}
-              </div>
-              <div className="" onClick={() => setOpenNNavbar(true)}>
-                <BiMenuAltLeft size={35} className="cursor-pointer" />
-              </div>
+      {/* Modern Header Container */}
+      <header className="bg-white shadow-sm border-b border-gray-100">
+        <div className="container mx-auto px-4 lg:px-6">
+          {/* Desktop Header */}
+          <div className="hidden md:flex items-center justify-between py-4">
+            {/* Logo Section */}
+            <div className="flex-shrink-0">
+              <Link href="/" className="flex items-center">
+                <Image
+                  src={logo || "/placeholder.svg"}
+                  alt="Logo"
+                  width={120}
+                  height={40}
+                  className="h-10 w-auto"
+                  priority
+                />
+              </Link>
             </div>
-          </div>
-        </div>
-        {/* search bar */}
-        <div className="container mx-auto px-4 w-full">
-          <input
-            type="search"
-            placeholder="Search Products..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="block w-full rounded-lg border-2 h-9 border-blue-600 bg-gray-100 p-2 text-gray-900 focus:ring-blue-600"
-          />
-          {searchTerm && searchData && (
-            <div className="container mx-auto px-4 absolute top-full z-10 mt-2 w-full bg-white p-4 shadow-lg">
-              {searchData.length === 0 ? (
-                <div className="flex w-full items-start py-2">
-                  <h1>No products found</h1>
+
+            {/* Search Section */}
+            <div className="flex-1 max-w-2xl mx-8">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <AiOutlineSearch className="h-5 w-5 text-gray-400" />
                 </div>
-              ) : (
-                searchData.map((item) => (
-                  <Link key={`${item._id}-${item.name}`} href={`/product/${item._id}`}>
-                    <div className="flex w-full items-start py-2 hover:bg-gray-100">
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                        <Image
-                          src={`${backend_url}/${item?.images[0]}`}
-                          alt={item.name}
-                          width={40}
-                          height={40}
-                          className="mr-2 h-full w-full object-contain"
-                          unoptimized
-                        />
-                      </div>
-                      <h1 className="line-clamp-2">{item.name}</h1>
+                <input
+                  type="text"
+                  placeholder="Search for products..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-full bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+
+                {/* Search Results Dropdown */}
+                {searchTerm && searchData && (
+                  <div className="absolute top-full z-50 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div className="max-h-96 overflow-y-auto">
+                      {searchData.length === 0 ? (
+                        <div className="px-4 py-6 text-center text-gray-500">
+                          <AiOutlineSearch className="mx-auto h-8 w-8 text-gray-300 mb-2" />
+                          <p>No products found</p>
+                        </div>
+                      ) : (
+                        <div className="py-2">
+                          {searchData.map((item) => (
+                            <Link key={`${item._id}-${item.name}`} href={`/product/${item._id}`}>
+                              <div className="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150">
+                                <div className="flex-shrink-0 h-12 w-12 rounded-lg overflow-hidden">
+                                  <Image
+                                    src={`${backend_url}/${item?.images[0]}`}
+                                    alt={item.name}
+                                    width={48}
+                                    height={48}
+                                    className="h-full w-full object-cover"
+                                    unoptimized
+                                  />
+                                </div>
+                                <div className="ml-3 flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                                  <p className="text-xs text-gray-500 truncate">{item.category}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </Link>
-                ))
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      {/* mobile side navbar */}
-      {openNavbar && (
-        <div className="fixed inset-0 top-0 z-[270] h-full w-full animate-fadeIn overflow-y-auto bg-black/50">
-          <div className="relative h-full w-full max-w-60 bg-white">
-            <div onClick={() => setOpenNNavbar(false)} className="absolute right-2 top-2 cursor-pointer">
-              <RxCross1 size={25} />
-            </div>
-            <ul className="flex flex-col gap-4 pl-6 pt-14">
-              {navItems.map((item, index) => (
-                <li key={index} className="list-none">
-                  <Link
-                    href={item.url}
-                    className={clsx(
-                      "font-semibold transition-colors duration-200",
-                      pathname === item.url ? "text-indigo-800" : "text-black hover:text-indigo-900",
-                    )}
-                  >
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Mobile sidebar user section */}
-            {isAuthenticated && (
-              <div className="border-t mt-4 pt-4 px-6">
-                <div className="flex items-center mb-4">
-                  <Image
-                    src={getAvatarUrl() || "/placeholder.svg"}
-                    alt="User avatar"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full object-cover object-top mr-3"
-                    unoptimized
-                    onError={(e) => {
-                      e.target.src = "/assets/fallback-avatar.png"
-                    }}
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
-                </div>
-                <Link
-                  href="/profile"
-                  className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md mb-2"
-                  onClick={() => setOpenNNavbar(false)}
-                >
-                  Profile Settings
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-md disabled:opacity-50 flex items-center"
-                >
-                  <FiLogOut className="mr-2" />
-                  {isLoggingOut ? "Logging out..." : "Logout"}
-                </button>
+                )}
               </div>
-            )}
+            </div>
 
-            <div className="flex w-full cursor-pointer items-center justify-center">
+            {/* Right Section */}
+            <div className="flex items-center space-x-4">
+              {/* Admin Panel Button */}
               <Link
-                href={user?.role === "admin" ? "/shop-login" : "#"}
+                href={user?.role === "admin" ? "/admin" : "#"}
                 onClick={(e) => {
                   if (!isAuthenticated) {
                     e.preventDefault()
@@ -380,115 +201,414 @@ function Header() {
                     router.push("/login")
                   } else if (user?.role !== "admin") {
                     e.preventDefault()
-                    toast.error("Only admin users can access seller features")
+                    toast.error("Only admin users can access admin panel")
                   }
                 }}
-                className={`my-3 flex items-center gap-2 rounded-md px-9 py-3 ${
-                  user?.role === "admin" ? "bg-indigo-800 text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                className={`hidden lg:flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${user?.role === "admin"
+                  ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  }`}
               >
-                <h1>Admin Panel</h1>
-                {user?.role !== "admin" && <IoIosArrowForward className="ml-1" />}
+                <span>Admin Panel</span>
+                {user?.role === "admin" && <IoIosArrowForward className="ml-1 h-4 w-4" />}
               </Link>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* bottom navbar */}
-      <div
-        className={clsx("z-30 h-[70px] w-full", {
-          "sticky top-0 bg-[#3321c8] shadow-md": active,
-          "hidden bg-[#3321c8] md:block": !active,
-        })}
-      >
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          {/* categories */}
-          <div
-            onClick={() => setDropDown(!dropDown)}
-            className="relative flex h-[70px] items-center md:w-[190px] lg:w-[270px]"
-          >
-            <BiMenuAltLeft size={30} className="absolute left-2 top-1/2 mt-1.5 -translate-y-1/2" />
-            <button className="font-sans mt-[10px] flex h-[60px] w-full select-none items-center justify-between rounded-t-md bg-white pl-10 text-lg font-[500]">
-              All Categories
-            </button>
-            <IoIosArrowDown size={20} className="absolute right-2 top-1/2 mt-1.5 -translate-y-1/2 cursor-pointer" />
-            {dropDown && <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />}
-          </div>
-          {/* nav links */}
-          <div>
-            <Navbar />
-          </div>
-          {/* nav icons */}
-          <div>
-            <div className="flex items-center">
-              <div onClick={() => setOpenWhishlist(true)} className="relative mr-4 cursor-pointer">
-                <AiOutlineHeart size={30} className="text-white opacity-75" />
-                <span className="font-mono absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-[#3bc177] text-xs leading-tight text-white">
-                  {wishlist && wishlist.length}
-                </span>
+
+              {/* Cart Icon */}
+              <div className="relative">
+                <button
+                  onClick={() => setOpenCart(true)}
+                  className="p-2 text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                >
+                  <AiOutlineShoppingCart className="h-6 w-6" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
               </div>
-              <div onClick={() => setOpenCart(true)} className="relative mr-4 cursor-pointer">
-                <AiOutlineShoppingCart size={30} className="text-white opacity-75" />
-                <span className="font-mono absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-[#3bc177] text-xs leading-tight text-white">
-                  {cart ? cart.length : 0}
-                </span>
+
+              {/* Wishlist Icon */}
+              <div className="relative">
+                <button
+                  onClick={() => setOpenWhishlist(true)}
+                  className="p-2 text-gray-600 hover:text-red-500 transition-colors duration-200"
+                >
+                  <AiOutlineHeart className="h-6 w-6" />
+                  {wishlist.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </button>
               </div>
-              {/* Desktop User Menu */}
-              <div className="relative user-menu-container">
-                {isAuthenticated ? (
-                  <div className="flex-shrink-0 cursor-pointer">
+
+              {/* User Menu */}
+              {isAuthenticated ? (
+                <div className="relative user-menu-container">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-50 transition-colors duration-200"
+                  >
                     <Image
-                      src={getAvatarUrl() || "/placeholder.svg"}
-                      alt="User avatar"
+                      src={getAvatarUrl()}
+                      alt="User Avatar"
                       width={32}
                       height={32}
-                      className="h-8 w-8 rounded-full object-cover object-top"
-                      unoptimized
-                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="h-8 w-8 rounded-full border-2 border-gray-200 object-cover"
                       onError={(e) => {
                         e.target.src = "/assets/fallback-avatar.png"
                       }}
                     />
-                    {/* Desktop User Dropdown */}
+                    <IoIosArrowDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* User Dropdown Menu */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 min-w-[12rem] max-w-[16rem] w-auto bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                      <div className="py-1">
+                        <Link href="/profile" className="flex items-center justify-start px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 whitespace-nowrap flex-shrink-0">
+                          <CgProfile className="mr-3 h-4 w-4 flex-shrink-0" />
+                          <span className="flex-shrink-0">View Profile</span>
+                        </Link>
+
+                        <button
+                          onClick={handleLogout}
+                          disabled={isLoggingOut}
+                          className="w-full flex items-center justify-start px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 whitespace-nowrap flex-shrink-0"
+                        >
+                          <FiLogOut className="mr-3 h-4 w-4 flex-shrink-0" />
+                          <span className="flex-shrink-0">{isLoggingOut ? 'Signing out...' : 'Logout'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <Link
+                    href="/login"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors duration-200"
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Header */}
+          <div className="md:hidden">
+            <div className="flex items-center justify-between py-4">
+              {/* Mobile Logo */}
+              <Link href="/" className="flex-shrink-0">
+                <Image
+                  src={logo || "/placeholder.svg"}
+                  alt="Logo"
+                  width={80}
+                  height={32}
+                  className="h-8 w-auto"
+                />
+              </Link>
+
+              {/* Mobile Right Icons */}
+              <div className="flex items-center space-x-3">
+                {/* Wishlist */}
+                <button
+                  onClick={() => setOpenWhishlist(true)}
+                  className="relative p-2 text-gray-600 hover:text-red-500 transition-colors duration-200"
+                >
+                  <AiOutlineHeart className="h-6 w-6" />
+                  {wishlist.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Cart */}
+                <button
+                  onClick={() => setOpenCart(true)}
+                  className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                >
+                  <AiOutlineShoppingCart className="h-6 w-6" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* User Avatar */}
+                {isAuthenticated ? (
+                  <div className="relative user-menu-container">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="p-1 rounded-full hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <Image
+                        src={getAvatarUrl()}
+                        alt="User Avatar"
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 rounded-full border-2 border-gray-200 object-cover"
+                        onError={(e) => {
+                          e.target.src = "/assets/fallback-avatar.png"
+                        }}
+                      />
+                    </button>
+
+                    {/* Mobile User Dropdown */}
                     {showUserMenu && (
-                      <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
+                      <div className="absolute right-0 mt-2 min-w-[12rem] max-w-[16rem] w-auto bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
                         <div className="py-1">
-                          <div className="px-4 py-2 border-b">
-                            <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                            <p className="text-sm text-gray-500 truncate">{user.email}</p>
-                          </div>
                           <Link
                             href="/profile"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="flex items-center justify-start px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 whitespace-nowrap flex-shrink-0"
                             onClick={() => setShowUserMenu(false)}
                           >
-                            Profile Settings
+                            <CgProfile className="mr-3 h-4 w-4 flex-shrink-0" />
+                            <span className="flex-shrink-0">View Profile</span>
                           </Link>
+
                           <button
                             onClick={handleLogout}
                             disabled={isLoggingOut}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50 flex items-center"
+                            className="w-full flex items-center justify-start px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 whitespace-nowrap flex-shrink-0"
                           >
-                            <FiLogOut className="mr-2" />
-                            {isLoggingOut ? "Logging out..." : "Logout"}
+                            <FiLogOut className="mr-3 h-4 w-4 flex-shrink-0" />
+                            <span className="flex-shrink-0">{isLoggingOut ? 'Signing out...' : 'Logout'}</span>
                           </button>
                         </div>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <Link href="/login">
-                    <CgProfile size={30} className="text-white opacity-75" />
+                  <Link
+                    href="/login"
+                    className="p-2 text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                  >
+                    <CgProfile className="h-6 w-6" />
                   </Link>
+                )}
+
+                {/* Mobile Menu Toggle */}
+                <button
+                  onClick={() => setOpenNNavbar(true)}
+                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                >
+                  <BiMenuAltLeft className="h-7 w-7" />
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Search Bar */}
+            <div className="pb-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <AiOutlineSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-full bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+
+                {/* Mobile Search Results */}
+                {searchTerm && searchData && (
+                  <div className="absolute top-full z-50 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div className="max-h-80 overflow-y-auto">
+                      {searchData.length === 0 ? (
+                        <div className="px-4 py-6 text-center text-gray-500">
+                          <AiOutlineSearch className="mx-auto h-8 w-8 text-gray-300 mb-2" />
+                          <p>No products found</p>
+                        </div>
+                      ) : (
+                        <div className="py-2">
+                          {searchData.map((item) => (
+                            <Link key={`${item._id}-${item.name}`} href={`/product/${item._id}`}>
+                              <div className="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150">
+                                <div className="flex-shrink-0 h-10 w-10 rounded-lg overflow-hidden">
+                                  <Image
+                                    src={`${backend_url}/${item?.images[0]}`}
+                                    alt={item.name}
+                                    width={40}
+                                    height={40}
+                                    className="h-full w-full object-cover"
+                                    unoptimized
+                                  />
+                                </div>
+                                <div className="ml-3 flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                                  <p className="text-xs text-gray-500 truncate">{item.category}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
           </div>
         </div>
+      </header>
+
+      {/* Mobile Navigation Sidebar */}
+      {openNavbar && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setOpenNNavbar(false)} />
+          <div className="fixed top-0 right-0 h-full w-80 max-w-sm bg-white shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+              <button
+                onClick={() => setOpenNNavbar(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              >
+                <RxCross1 className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              {/* User Info in Mobile Sidebar */}
+              {isAuthenticated && (
+                <div className="flex items-center p-4 mb-4 bg-gray-50 rounded-xl">
+                  <Image
+                    src={getAvatarUrl()}
+                    alt="User Avatar"
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 rounded-full border-2 border-gray-200 object-cover"
+                    onError={(e) => {
+                      e.target.src = "/assets/fallback-avatar.png"
+                    }}
+                  />
+                  <div className="ml-3 flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Links */}
+              <nav className="space-y-2">
+                {navItems.map((item, index) => (
+                  <Link
+                    key={index}
+                    href={item.url}
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${pathname === item.url
+                      ? "bg-blue-50 text-blue-600 border border-blue-100"
+                      : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    onClick={() => setOpenNNavbar(false)}
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </nav>
+
+              {/* Mobile Admin Panel Link */}
+              {isAuthenticated && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <Link
+                    href={user?.role === "admin" ? "/admin" : "#"}
+                    onClick={(e) => {
+                      if (user?.role !== "admin") {
+                        e.preventDefault()
+                        toast.error("Only admin users can access admin panel")
+                      } else {
+                        setOpenNNavbar(false)
+                      }
+                    }}
+                    className={`flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${user?.role === "admin"
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      }`}
+                  >
+                    <span>Admin Panel</span>
+                    {user?.role === "admin" && <IoIosArrowForward className="ml-auto h-4 w-4" />}
+                  </Link>
+                </div>
+              )}
+
+              {/* Auth Buttons */}
+              {!isAuthenticated && (
+                <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
+                  <Link
+                    href="/login"
+                    className="block w-full px-4 py-3 text-center text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors duration-200"
+                    onClick={() => setOpenNNavbar(false)}
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="block w-full px-4 py-3 text-center text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                    onClick={() => setOpenNNavbar(false)}
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              )}
+
+              {/* Logout Button */}
+              {isAuthenticated && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                  >
+                    <FiLogOut className="mr-3 h-4 w-4" />
+                    {isLoggingOut ? 'Signing out...' : 'Sign out'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Secondary Navigation (Categories) */}
+      <div
+        className={`transition-all duration-300 ${active ? "sticky top-0 z-40 shadow-md" : "relative"
+          } bg-blue-600 text-blue-600`}
+      >
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="flex items-center justify-between h-16">
+            {/* Categories Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setDropDown(!dropDown)}
+                className="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-10 rounded-lg hover:bg-opacity-20 transition-all duration-200"
+              >
+                <BiMenuAltLeft className="h-5 w-5" />
+                <span className="text-sm font-medium hidden sm:block">All Categories</span>
+                <IoIosArrowDown className={`h-4 w-4 transition-transform duration-200 ${dropDown ? 'rotate-180' : ''}`} />
+              </button>
+              {dropDown && <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />}
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:block">
+              <Navbar />
+            </div>
+          </div>
+        </div>
       </div>
-      {/* cart popup */}
+
+      {/* Cart and Wishlist Popups */}
       {openCart && <CartPopUp setOpenCart={setOpenCart} />}
-      {/* wishlist popup */}
       {openWhishlist && <WhishListPopUp setOpenWhishlist={setOpenWhishlist} />}
     </>
   )

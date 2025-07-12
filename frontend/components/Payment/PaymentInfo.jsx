@@ -7,6 +7,7 @@
 // } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import LoadingButton from "../LoadingButton";
 
 function PaymentInfo({
   user,
@@ -16,6 +17,7 @@ function PaymentInfo({
   cashOnDeliveryHandler,
 }) {
   const [select, setSelect] = useState(1);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
     expiryDate: "",
@@ -217,12 +219,14 @@ function PaymentInfo({
                   />
                 </div>
               </div>
-              <button
+              <LoadingButton
                 type="submit"
-                className="my-3 flex w-[150px] cursor-pointer items-center justify-center rounded-lg bg-[#f63b60] py-2.5 text-[18px] font-[600] text-[#fff]"
+                loading={paymentLoading}
+                className="my-3 w-[150px] bg-[#f63b60] text-white"
+                variant="primary"
               >
                 Pay Now
-              </button>
+              </LoadingButton>
             </form>
           </div>
         )}
@@ -352,12 +356,14 @@ function PaymentInfo({
                     />
                   </div>
                 </div>
-                <button
+                <LoadingButton
                   type="submit"
-                  className="my-3 flex w-[150px] cursor-pointer items-center justify-center rounded-lg bg-[#f63b60] py-2.5 text-[18px] font-[600] text-[#fff]"
+                  loading={paymentLoading}
+                  className="my-3 w-[150px] bg-[#f63b60] text-white"
+                  variant="primary"
                 >
                   Submit
-                </button>
+                </LoadingButton>
               </form>
             </div>
           )}
@@ -367,7 +373,7 @@ function PaymentInfo({
         */}
 
         <div>
-          <div className="mb-2 flex w-full border-b pb-5">
+          {/* <div className="mb-2 flex w-full border-b pb-5">
             <div
               className="relative flex h-[25px] w-[25px] cursor-pointer items-center justify-center rounded-full border-[3px] border-[#1d1a1ab4] bg-transparent"
               onClick={() => setSelect(2)}
@@ -379,7 +385,7 @@ function PaymentInfo({
             <h4 className="pl-2 text-[18px] font-[600] text-[#000000b1]">
               Pay with Paypal
             </h4>
-          </div>
+          </div> */}
 
           {select === 2 && (
             <div>
@@ -397,12 +403,14 @@ function PaymentInfo({
                     className="block w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
-                <button
+                <LoadingButton
                   type="submit"
-                  className="my-3 flex w-[150px] cursor-pointer items-center justify-center rounded-lg bg-[#f63b60] py-2.5 text-[18px] font-[600] text-[#fff]"
+                  loading={paymentLoading}
+                  className="my-3 w-[150px] bg-[#f63b60] text-white"
+                  variant="primary"
                 >
                   Pay Now
-                </button>
+                </LoadingButton>
               </form>
             </div>
           )}
@@ -427,12 +435,14 @@ function PaymentInfo({
           {select === 3 && (
             <div>
               <form onSubmit={cashOnDeliveryHandler}>
-                <button
+                <LoadingButton
                   type="submit"
-                  className="my-3 flex w-[150px] cursor-pointer items-center justify-center rounded-lg bg-[#f63b60] py-2.5 text-[18px] font-[600] text-[#fff]"
+                  loading={paymentLoading}
+                  className="my-3 w-[150px] bg-[#f63b60] text-white"
+                  variant="primary"
                 >
                   Confirm
-                </button>
+                </LoadingButton>
               </form>
             </div>
           )}

@@ -9,6 +9,7 @@ import eventReducer from "@/redux/reducers/event";
 import cartReducer from "@/redux/reducers/cart";
 import wishlistReducer from "../redux/reducers/whishlist";
 import { orderReducer } from "@/redux/reducers/order";
+import { withdrawReducer } from "@/redux/reducers/withdraw";
 
 // Create a custom storage engine to handle SSR
 const createWebStorage = () => {
@@ -44,6 +45,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   wishlist: wishlistReducer,
   orders: orderReducer, // Reverted to 'orders' to match original working state
+  withdraws: withdrawReducer,
 });
 
 // Persist config with better production settings

@@ -42,7 +42,7 @@ function ProductDetails({ id }) {
       <Header />
       {product ? (
         <>
-          <ProductDetail data={product} />
+          <ProductDetail data={product} isEvent={eventData !== null} />
           {eventData === null && <SuggestedProducts data={product} />}
         </>
       ) : (

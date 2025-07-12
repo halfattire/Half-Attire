@@ -4,14 +4,22 @@
 import { useEffect, useState } from "react";
 
 function EventCountDown({ data }) {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState({});
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+    setTimeLeft(calculateTimeLeft());
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+    
     const timer = setTimeout(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
     return () => clearTimeout(timer);
-  });
+  }, [timeLeft, isClient]);
 
   function calculateTimeLeft() {
     // Try both field names for backward compatibility
@@ -32,7 +40,7 @@ function EventCountDown({ data }) {
     return timeLeft;
   }
 
-  const timerComponent = Object.entries(timeLeft).map(([interval, value]) => {
+  const timerComponent = isClient ? Object.entries(timeLeft).map(([interval, value]) => {
     if (!value) {
       return null;
     }
@@ -45,7 +53,7 @@ function EventCountDown({ data }) {
         {value} {interval}{" "}
       </span>
     );
-  });
+  }) : <span className="text-base md:text-[25px] text-[#475eda] font-semibold">Loading...</span>;
 
   return (
     <div className="mt-4">

@@ -31,7 +31,7 @@ function DropDown({ categoriesData, setDropDown }) {
               width={24}
               height={24}
             />
-            <h3 className="m-3 select-none">{item.title}</h3>
+            <h3 className="m-3 select-none text-gray-800 font-medium">{item.title}</h3>
           </div>
         ))}
     </div>

@@ -10,11 +10,16 @@ import { useDispatch, useSelector } from "react-redux"
 import { addTocartAction, removeFromCartAction } from "../redux/actions/cart"
 import { addToWishlistAction, removeFromWishlistAction } from "../redux/actions/whishlist.js"
 import Ratings from "./Ratings"
+import { enhanceProductRating } from "../lib/utils/shopRating"
+import LoadingSpinner from "./LoadingSpinner"
 
 function ProductCard({ data, isEvent }) {
   const [click, setClick] = useState(false)
   const [open, setOpen] = useState(false)
   const [inCart, setInCart] = useState(false)
+  const [cartLoading, setCartLoading] = useState(false)
+  const [wishlistLoading, setWishlistLoading] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
 
   const dispatch = useDispatch()
   const { cart = [] } = useSelector((state) => state.cart)
@@ -46,14 +51,24 @@ function ProductCard({ data, isEvent }) {
     return data.originalPrice
   }
 
-  const removeFromWishlistHandler = (data) => {
-    setClick(!click)
-    dispatch(removeFromWishlistAction(data))
+  const removeFromWishlistHandler = async (data) => {
+    setWishlistLoading(true)
+    try {
+      setClick(!click)
+      await dispatch(removeFromWishlistAction(data))
+    } finally {
+      setWishlistLoading(false)
+    }
   }
 
-  const addFromWishlistHandler = (data) => {
-    setClick(!click)
-    dispatch(addToWishlistAction(data))
+  const addFromWishlistHandler = async (data) => {
+    setWishlistLoading(true)
+    try {
+      setClick(!click)
+      await dispatch(addToWishlistAction(data))
+    } finally {
+      setWishlistLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -68,49 +83,63 @@ function ProductCard({ data, isEvent }) {
     }
   }, [cart, data._id, wishlist])
 
-  const handleCartClick = () => {
+  const handleCartClick = async () => {
     // For variable products, redirect to product page for variation selection
     if (data.isVariableProduct) {
       window.location.href = `/product/${data._id}`
       return
     }
 
-    if (inCart) {
-      dispatch(removeFromCartAction(data._id))
-    } else {
-      const cartData = { ...data, qty: 1 }
-      dispatch(addTocartAction(cartData))
+    setCartLoading(true)
+    try {
+      if (inCart) {
+        await dispatch(removeFromCartAction(data._id))
+      } else {
+        const cartData = { ...data, qty: 1 }
+        await dispatch(addTocartAction(cartData))
+      }
+      setInCart(!inCart)
+    } finally {
+      setCartLoading(false)
     }
-    setInCart(!inCart)
   }
 
   return (
     <>
       <div className="relative h-[340px] w-full cursor-pointer rounded-lg bg-white p-3 shadow-sm md:max-w-72"> 
         <Link href={isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}>
-          <Image
-            src={
-              data.images && data.images.length > 0
-                ? data.images[0].startsWith('http') 
-                  ? data.images[0] 
-                  : `${backend_url}/${data.images[0]}`
-                : "https://cdn-icons-png.flaticon.com/128/44/44289.png"
-            }
-            alt={data.name}
-            width={200}
-            height={170}
-            className="h-[170px] w-11/12 object-contain pr-2"
-            unoptimized
-          />
+          <div className="relative h-[170px] w-full">
+            {imageLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded">
+                <LoadingSpinner size="md" color="gray" />
+              </div>
+            )}
+            <Image
+              src={
+                data.images && data.images.length > 0
+                  ? data.images[0].startsWith('http') 
+                    ? data.images[0] 
+                    : `${backend_url}/${data.images[0]}`
+                  : "https://cdn-icons-png.flaticon.com/128/44/44289.png"
+              }
+              alt={data.name}
+              width={200}
+              height={170}
+              className="h-[170px] w-11/12 object-contain pr-2"
+              unoptimized
+              onLoad={() => setImageLoading(false)}
+              onError={() => setImageLoading(false)}
+            />
+          </div>
         </Link>
-        {/* <Link href={`/shop/preview/${data?.shop._id}`}>
+        <Link href={`/shop/preview/${data?.shop._id}`}>
           <h5 className="py-3 text-[15px] text-blue-400">{data.shop?.name || "Unknown Shop"}</h5>
-        </Link> */}
+        </Link>
         <Link href={`/product/${productId}`}>
           <h5 className="mb-2 line-clamp-2 font-medium">{data?.name}</h5>
         </Link>
         <div className="flex">
-          <Ratings rating={data?.ratings} />
+          <Ratings rating={enhanceProductRating(data?.ratings, data?.reviews?.length)} />
         </div>
         <div className="flex items-center justify-between pt-4">
           <div className="flex items-center">
@@ -126,21 +155,35 @@ function ProductCard({ data, isEvent }) {
 
         {/* Side options */}
         {click ? (
-          <AiFillHeart
-            size={22}
-            className="absolute right-2 top-5 cursor-pointer"
+          <div 
+            className="absolute right-2 top-5 cursor-pointer flex items-center justify-center w-6 h-6"
             onClick={() => removeFromWishlistHandler(data)}
-            color="red"
-            title="Remove from wishlist"
-          />
+          >
+            {wishlistLoading ? (
+              <LoadingSpinner size="sm" color="red" />
+            ) : (
+              <AiFillHeart
+                size={22}
+                color="red"
+                title="Remove from wishlist"
+              />
+            )}
+          </div>
         ) : (
-          <AiOutlineHeart
-            size={22}
-            className="absolute right-2 top-5 cursor-pointer"
+          <div 
+            className="absolute right-2 top-5 cursor-pointer flex items-center justify-center w-6 h-6"
             onClick={() => addFromWishlistHandler(data)}
-            color="#333"
-            title="Add to wishlist"
-          />
+          >
+            {wishlistLoading ? (
+              <LoadingSpinner size="sm" color="current" />
+            ) : (
+              <AiOutlineHeart
+                size={22}
+                color="#333"
+                title="Add to wishlist"
+              />
+            )}
+          </div>
         )}
         <AiOutlineEye
           size={22}
@@ -150,11 +193,13 @@ function ProductCard({ data, isEvent }) {
           title="Quick View"
         />
         <div
-          className="absolute right-2 top-24 cursor-pointer"
+          className="absolute right-2 top-24 cursor-pointer flex items-center justify-center w-6 h-6"
           onClick={handleCartClick}
           title={data.isVariableProduct ? "Select options" : inCart ? "Remove from cart" : "Add to cart"}
         >
-          {data.isVariableProduct ? (
+          {cartLoading ? (
+            <LoadingSpinner size="sm" color="current" />
+          ) : data.isVariableProduct ? (
             <AiOutlineShoppingCart size={25} color="#444" />
           ) : inCart ? (
             <MdOutlineRemoveShoppingCart size={25} color="#444" />

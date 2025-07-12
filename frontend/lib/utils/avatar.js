@@ -7,7 +7,7 @@ export const getAvatarUrl = (avatar) => {
     return "/assets/fallback-avatar.png";
   }
   
-  // If it's already a full URL (Cloudinary), return as is
+  // If it's already a full URL (includes Google, Cloudinary, etc.), return as is
   if (avatar.startsWith("http://") || avatar.startsWith("https://")) {
     return avatar;
   }
@@ -18,7 +18,9 @@ export const getAvatarUrl = (avatar) => {
 
 export const handleAvatarError = (e) => {
   // Avatar load error, using fallback
+  console.warn("Avatar failed to load:", e.target.src);
   e.target.src = "/assets/fallback-avatar.png";
+  e.target.onerror = null; // Prevent infinite loop if fallback also fails
 };
 
 export const getImageUrl = (imageUrl) => {

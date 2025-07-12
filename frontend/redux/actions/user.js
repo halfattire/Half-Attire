@@ -55,14 +55,14 @@ export const logout = () => async (dispatch) => {
     const result = await logoutUser();
 
     // Clear Redux state regardless of result
-    dispatch({ type: "LOGOUT_SUCCESS" });
+    dispatch({ type: "user/logoutSuccess" });
 
     return result;
   } catch (error) {
     console.error("Logout action error:", error);
 
     // Clear Redux state even if logout fails
-    dispatch({ type: "LOGOUT_SUCCESS" });
+    dispatch({ type: "user/logoutSuccess" });
 
     return { success: false, error };
   }

@@ -7,140 +7,128 @@ import { RiLockPasswordLine } from "react-icons/ri"
 import { MdOutlineTrackChanges } from "react-icons/md"
 import { TbAddressBook } from "react-icons/tb"
 import { useRouter } from "next/navigation"
+import { useDispatch } from "react-redux"
 import { toast } from "react-toastify"
-import axios from "axios"
-import { server } from "../../lib/server"
-import Cookies from "js-cookie"
-import { signOut } from "firebase/auth"
-import { auth } from "../../lib/firebase"
+import { logout } from "../../redux/actions/user"
 
-// Props:
-// - active: Number indicating the active menu item
-// - setActive: Function to set the active menu item
-function ProfileSidebar({ active, setActive }) {
+function ProfileSidebar({ active, setActive, onItemClick }) {
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const handleLogout = async () => {
     try {
-      // Step 1: Check if user is logged in with Google
-      const googleToken = localStorage.getItem("token") || Cookies.get("token")
-
-      // Step 2: If Google token exists, sign out from Firebase
-      if (googleToken) {
-        try {
-          await signOut(auth)
-        } catch (firebaseError) {
-          console.log("Firebase signout error:", firebaseError)
-        }
-
-        // Clear Google auth data
-        localStorage.removeItem("token")
-        localStorage.removeItem("userData")
-        Cookies.remove("token")
-        Cookies.remove("userData")
-      }
-
-      // Step 3: Always try traditional logout (will work if user is logged in traditionally)
-      try {
-        const res = await axios.get(`${server}/user/logout`, {
-          withCredentials: true,
-        })
-        toast.success(res.data.message)
-      } catch (apiError) {
-        // If traditional logout fails but we already handled Google logout, still consider it a success
-        if (googleToken) {
-          toast.success("Successfully logged out")
-        } else {
-          // Only show error if both methods failed
-          throw apiError
-        }
-      }
-
-      // Step 4: Redirect and reload (this will clear Redux state automatically)
+      console.log("ProfileSidebar: Starting logout...")
+      
+      await dispatch(logout())
+      
       router.push("/login")
-      window.location.reload(true)
+      toast.success("Successfully logged out")
     } catch (error) {
-      console.log(error.message)
-      toast.error(error.response?.data?.message || "Logout failed")
-
-      // Force cleanup even if logout fails
-      localStorage.removeItem("token")
-      localStorage.removeItem("userData")
-      Cookies.remove("token")
-      Cookies.remove("userData")
-
+      console.error("ProfileSidebar: Logout error:", error)
+      toast.error("Logout failed. Please try again.")
+      
       router.push("/login")
-      window.location.reload(true)
     }
   }
 
+  const handleItemClick = (activeIndex, path = null) => {
+    setActive(activeIndex)
+    if (onItemClick) onItemClick()
+    if (path) router.push(path)
+  }
+
+  const menuItems = [
+    {
+      id: 1,
+      icon: RxPerson,
+      label: "Profile",
+      onClick: () => handleItemClick(1)
+    },
+    {
+      id: 2,
+      icon: HiOutlineShoppingBag,
+      label: "Orders",
+      onClick: () => handleItemClick(2)
+    },
+    {
+      id: 3,
+      icon: HiOutlineReceiptRefund,
+      label: "Refunds",
+      onClick: () => handleItemClick(3)
+    },
+    {
+      id: 4,
+      icon: AiOutlineMessage,
+      label: "Inbox",
+      onClick: () => handleItemClick(4, "/inbox")
+    },
+    {
+      id: 5,
+      icon: MdOutlineTrackChanges,
+      label: "Track Order",
+      onClick: () => handleItemClick(5)
+    },
+    {
+      id: 6,
+      icon: RiLockPasswordLine,
+      label: "Change Password",
+      onClick: () => handleItemClick(6)
+    },
+    {
+      id: 7,
+      icon: TbAddressBook,
+      label: "Address",
+      onClick: () => handleItemClick(7)
+    }
+  ]
+
   return (
-    <div className="md:mr-6 w-full rounded-lg bg-white p-4 shadow-sm sticky top-32 md:top-20">
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => setActive(1)}
-      >
-        <RxPerson size={20} color={active === 1 ? "red" : ""} />
-        <span className={`${active === 1 ? "font-semibold text-red-600" : ""} hidden md:block`}>Person</span>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Header */}
+      <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+        <h2 className="text-lg font-semibold text-gray-900">Account Settings</h2>
+        <p className="text-sm text-gray-600 mt-1">Manage your profile and preferences</p>
       </div>
 
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => setActive(2)}
-      >
-        <HiOutlineShoppingBag size={20} color={active === 2 ? "red" : ""} />
-        <span className={`${active === 2 ? "font-semibold text-red-600" : ""} hidden md:block`}>Orders</span>
-      </div>
+      {/* Menu Items */}
+      <div className="p-2">
+        {menuItems.map((item) => {
+          const IconComponent = item.icon
+          const isActive = active === item.id
 
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => setActive(3)}
-      >
-        <HiOutlineReceiptRefund size={20} color={active === 3 ? "red" : ""} />
-        <span className={`${active === 3 ? "font-semibold text-red-600" : ""} hidden md:block`}>Refunds</span>
-      </div>
+          return (
+            <button
+              key={item.id}
+              onClick={item.onClick}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 mb-1 ${
+                isActive
+                  ? "bg-blue-50 text-blue-700 border border-blue-100 shadow-sm"
+                  : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <div className={`flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-400"}`}>
+                <IconComponent size={20} />
+              </div>
+              <span className={`font-medium text-sm ${isActive ? "text-blue-700" : "text-gray-700"}`}>
+                {item.label}
+              </span>
+              {isActive && (
+                <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+              )}
+            </button>
+          )
+        })}
 
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => {
-          setActive(4)
-          router.push("/inbox")
-        }}
-      >
-        <AiOutlineMessage size={20} color={active === 4 ? "red" : ""} />
-        <span className={`${active === 4 ? "font-semibold text-red-600" : ""} hidden md:block`}>Inbox</span>
-      </div>
-
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => setActive(5)}
-      >
-        <MdOutlineTrackChanges size={20} color={active === 5 ? "red" : ""} />
-        <span className={`${active === 5 ? "font-semibold text-red-600" : ""} hidden md:block`}>Track Order</span>
-      </div>
-
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => setActive(6)}
-      >
-        <RiLockPasswordLine size={20} color={active === 6 ? "red" : ""} />
-        <span className={`${active === 6 ? "font-semibold text-red-600" : ""} hidden md:block`}>Change Password</span>
-      </div>
-
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all"
-        onClick={() => setActive(7)}
-      >
-        <TbAddressBook size={20} color={active === 7 ? "red" : ""} />
-        <span className={`${active === 7 ? "font-semibold text-red-600" : ""} hidden md:block`}>Address</span>
-      </div>
-
-      <div
-        className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-3 transition-all hover:text-red-600"
-        onClick={handleLogout}
-      >
-        <AiOutlineLogin size={20} />
-        <span className="font-semibold hidden md:block">Logout</span>
+        {/* Logout Button */}
+        <div className="border-t border-gray-100 mt-4 pt-4">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200"
+          >
+            <AiOutlineLogin size={20} />
+            <span className="font-medium text-sm">Sign Out</span>
+          </button>
+        </div>
       </div>
     </div>
   )

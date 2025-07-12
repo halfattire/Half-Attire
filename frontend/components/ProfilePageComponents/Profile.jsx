@@ -141,49 +141,67 @@ function Profile() {
   }
 
   return (
-    <div className="bg-gray-100 rounded-lg shadow-sm p-6">
-      <div className="flex w-full justify-center mb-8">
-        <div className="relative">
-          {getAvatarUrl() ? (
-            <img
-              src={getAvatarUrl() || "/placeholder.svg"}
-              className="h-32 w-32 rounded-full border-4 border-blue-600 object-cover object-top"
-              alt="User avatar"
-              onError={(e) => {
-                e.target.src = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
-              }}
-            />
-          ) : (
-            <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-blue-600 bg-gray-200 object-cover">
-              <FaUserCircle className="h-24 w-24 text-gray-400" />
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">My Profile</h1>
+          <p className="text-gray-600">Manage your personal information and preferences</p>
+        </div>
+      </div>
+
+      {/* Avatar Section */}
+      <div className="px-6 py-8 border-b border-gray-100">
+        <div className="flex flex-col items-center">
+          <div className="relative group">
+            {getAvatarUrl() ? (
+              <img
+                src={getAvatarUrl() || "/placeholder.svg"}
+                className="h-32 w-32 rounded-full border-4 border-white shadow-lg object-cover"
+                alt="User avatar"
+                onError={(e) => {
+                  e.target.src = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+                }}
+              />
+            ) : (
+              <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white shadow-lg bg-gray-100">
+                <FaUserCircle className="h-20 w-20 text-gray-400" />
+              </div>
+            )}
+            
+            <div className="absolute bottom-2 right-2 bg-blue-600 rounded-full p-2 shadow-lg hover:bg-blue-700 cursor-pointer group-hover:scale-110 transform transition-all duration-200">
+              <input
+                type="file"
+                id="avatar"
+                hidden
+                onChange={handleImageChange}
+                accept="image/*"
+                disabled={avatarUploading}
+              />
+              <label htmlFor="avatar" className="cursor-pointer w-full h-full flex items-center justify-center">
+                {avatarUploading ? (
+                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                ) : (
+                  <AiOutlineCamera className="h-5 w-5 text-white" />
+                )}
+              </label>
             </div>
-          )}
-          <div className="absolute bottom-1.5 right-1.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors shadow-sm">
-            <input
-              type="file"
-              id="avatar"
-              hidden
-              onChange={handleImageChange}
-              accept="image/*"
-              disabled={avatarUploading}
-            />
-            <label htmlFor="avatar" className="cursor-pointer w-full h-full flex items-center justify-center">
-              {avatarUploading ? (
-                <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-              ) : (
-                <AiOutlineCamera size={18} />
-              )}
-            </label>
+          </div>
+          
+          <div className="mt-4 text-center">
+            <h2 className="text-xl font-semibold text-gray-900">{user.name}</h2>
+            <p className="text-gray-500 text-sm mt-1">{user.email}</p>
           </div>
         </div>
       </div>
 
-      <div className="section py-4">
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* First row */}
-            <div className="w-full">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+      {/* Form Section */}
+      <div className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Full Name */}
+            <div className="space-y-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                 Full Name
               </label>
               <input
@@ -192,25 +210,15 @@ function Profile() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 id="name"
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your full name"
                 required
               />
             </div>
 
-            <div className="w-full max-w-full overflow-x-hidden flex flex-col">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <div className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700 break-words">
-                {user.email}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
-            </div>
-
-            {/* Second row */}
-            <div className="w-full">
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+            {/* Phone Number */}
+            <div className="space-y-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
                 Phone Number
               </label>
               <input
@@ -219,19 +227,63 @@ function Profile() {
                 name="phoneNumber"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your phone number"
               />
             </div>
-            <div className="w-full flex items-end">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full rounded-md border-2 border-blue-600 bg-transparent px-6 py-2 text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? "Updating..." : updateSuccess ? "Updated!" : "Update Profile"}
-              </button>
+
+            {/* Email (Read Only) */}
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email Address
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  id="email"
+                  value={user.email}
+                  disabled
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                />
+                <div className="absolute right-3 top-3">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">Email address cannot be changed for security reasons</p>
             </div>
+          </div>
+
+          {/* Save Button */}
+          <div className="flex justify-end pt-6 border-t border-gray-100">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                updateSuccess
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : isSubmitting
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5"
+              }`}
+            >
+              {isSubmitting ? (
+                <div className="flex items-center">
+                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                  Updating...
+                </div>
+              ) : updateSuccess ? (
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Updated!
+                </div>
+              ) : (
+                "Save Changes"
+              )}
+            </button>
           </div>
         </form>
       </div>

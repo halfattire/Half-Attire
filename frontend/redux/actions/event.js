@@ -100,3 +100,21 @@ export const getAllEventsAdmin = () => async (dispatch) => {
     return [];
   }
 };
+
+// Action to delete event (Admin functionality)
+export const deleteEventAdmin = (id) => async (dispatch) => {
+  try {
+    dispatch(deleteEventRequest());
+
+    const { data } = await axios.delete(`${server}/event/admin-delete-event/${id}`, {
+      withCredentials: true,
+    });
+
+    dispatch(deleteEventSuccess(data.message));
+    return { success: true, message: data.message };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Failed to delete event";
+    dispatch(deleteEventFailed(errorMessage));
+    return { success: false, error: errorMessage };
+  }
+};

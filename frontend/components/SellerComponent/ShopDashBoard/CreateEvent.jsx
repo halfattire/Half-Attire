@@ -81,25 +81,73 @@ function CreateEvent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate seller data
+    if (!seller || !seller._id) {
+      toast.error("Seller information not found. Please login again.");
+      return;
+    }
+
+    // Validate required fields
+    if (!name.trim()) {
+      toast.error("Event name is required");
+      return;
+    }
+
+    if (!description.trim()) {
+      toast.error("Event description is required");
+      return;
+    }
+
+    if (!category) {
+      toast.error("Event category is required");
+      return;
+    }
+
+    if (!discountPrice || discountPrice <= 0) {
+      toast.error("Valid discount price is required");
+      return;
+    }
+
+    if (!stock || stock <= 0) {
+      toast.error("Valid stock quantity is required");
+      return;
+    }
+
+    if (!startDate) {
+      toast.error("Start date is required");
+      return;
+    }
+
+    if (!endDate) {
+      toast.error("End date is required");
+      return;
+    }
+
+    if (images.length === 0) {
+      toast.error("At least one image is required");
+      return;
+    }
+
     try {
       // Convert images to base64
       const imagePromises = images.map(image => convertToBase64(image))
       const imageBase64Array = await Promise.all(imagePromises)
 
       const eventData = {
-        name,
-        description,
+        name: name.trim(),
+        description: description.trim(),
         category,
-        tags,
-        originalPrice,
-        discountPrice,
-        stock,
+        tags: tags.trim(),
+        originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
+        discountPrice: parseFloat(discountPrice),
+        stock: parseInt(stock),
         shopId: seller._id,
         start_Date: startDate,
-        Finish_Date: endDate,
+        finish_Date: endDate,
         images: imageBase64Array,
       }
 
+      console.log("Submitting event data:", eventData);
       dispatch(createEvent(eventData));
     } catch (error) {
       console.error('Error converting images to base64:', error)
@@ -108,7 +156,7 @@ function CreateEvent() {
   };
 
   return (
-    <section className="bg-gray-50 sm:py-4 dark:bg-gray-900">
+    <section className="bg-white sm:py-4 dark:bg-gray-900">
       <div className="mx-auto flex h-[90vh] flex-col items-center justify-center overflow-y-auto px-2 py-2 sm:px-6 sm:py-8 md:h-[80vh] lg:py-0">
         <div className="custom-scrollbar w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
           <div className="space-y-4 p-6 sm:p-8 md:space-y-6">

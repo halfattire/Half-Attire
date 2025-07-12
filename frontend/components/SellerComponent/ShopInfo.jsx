@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { getAllShopProducts } from "../../redux/actions/product";
 import Loader from "@/components/Loader";
 import Image from "next/image";
+import SafeAvatar from "../SafeAvatar";
+import { calculateShopRating, getShopRatingText } from "../../lib/utils/shopRating";
 
 function ShopInfo({ isOwner }) {
   const router = useRouter();
@@ -56,21 +58,9 @@ function ShopInfo({ isOwner }) {
     }
   }
 
-  const productReviewsLength =
-    products &&
-    products.reduce((acc, product) => acc + product.reviews.length, 0);
-
-  const totalRatings =
-    products &&
-    products.reduce(
-      (acc, product) =>
-        acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
-      0,
-    );
-
-  const avg = totalRatings / productReviewsLength || 0;
-
-  const averageRating = avg.toFixed(1);
+  // Enhanced shop rating calculation
+  const shopRatingData = calculateShopRating(products);
+  const shopRatingText = getShopRatingText(shopRatingData.reviewCount);
 
   return isLoading ? (
     <Loader />
@@ -78,23 +68,14 @@ function ShopInfo({ isOwner }) {
     <div className="">
       <div>
         <div className="flex flex-col items-center">
-          {data.avatar ? (
-            <Image
-              src={
-                data.avatar
-                  ? data.avatar.startsWith("http") 
-                    ? data.avatar 
-                    : `${backend_url}/${data.avatar}`
-                  : "/assets/placeholder.png"
-              }
-              alt="Seller Avatar"
-              className="h-32 w-32 rounded-full border-4 border-gray-200 object-cover"
-              width={128}
-              height={128}
-            />
-          ) : (
-            <CgProfile className="h-32 w-32 text-gray-400" />
-          )}
+          <SafeAvatar
+            src={data?.avatar}
+            alt={data?.name || "Shop Avatar"}
+            width={128}
+            height={128}
+            className="h-32 w-32 rounded-full border-4 border-gray-200 object-cover"
+            fallback={<CgProfile className="h-32 w-32 text-gray-400" />}
+          />
           <h2 className="mt-4 text-xl font-bold">{data.name}</h2>
           <p className="mt-2 text-gray-600">{data.description}</p>
         </div>
@@ -112,8 +93,12 @@ function ShopInfo({ isOwner }) {
             <span>{products && products.length}</span>
           </div>
           <div className="flex justify-between text-gray-700">
-            <span className="font-semibold">Shop Rating: </span>
-            <span>{averageRating}</span>
+            <span className="font-semibold">Shop Rating:</span>
+            <span>{shopRatingData.displayRating}/5.0</span>
+          </div>
+          <div className="flex justify-between text-gray-700">
+            <span className="font-semibold">Total Reviews:</span>
+            <span>{shopRatingData.reviewCount}</span>
           </div>
           <div className="flex justify-between text-gray-700">
             <span className="font-semibold">Joined On:</span>

@@ -127,7 +127,7 @@ function CreateProduct() {
   }
 
   return (
-    <section className="bg-gray-50 sm:py-4 dark:bg-gray-900">
+    <section className="bg-white sm:py-4 dark:bg-gray-900">
       <div className="mx-auto flex h-[90vh] flex-col items-center justify-center overflow-y-auto px-2 py-2 sm:px-6 sm:py-8 md:h-[80vh] lg:py-0">
         <div className="custom-scrollbar w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
           <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
