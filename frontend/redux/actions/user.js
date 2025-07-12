@@ -25,13 +25,29 @@ import { loadSellerFail, loadSellerRequest, loadSellerSuccess } from "../reducer
 export const loadUser = () => async (dispatch) => {
   try {
     dispatch(loadUserRequest());
-    const { data } = await axios.get(`${server}/user/getuser`, {
+    
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
       withCredentials: true,
-    });
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    
+    const { data } = await axios.get(`${server}/user/getuser`, config);
 
     // Store user data using the persistence service
     if (data.user && data.token) {
       setAuthToStorage(data.token, data.user);
+    } else if (data.user) {
+      // If no token returned, keep existing token but update user data
+      localStorage.setItem("userData", JSON.stringify(data.user));
     }
 
     dispatch(loadUserSuccess(data.user));
@@ -128,10 +144,25 @@ export const updateUserInfomation = (name, phoneNumber) => async (dispatch) => {
 export const updateUserAddress = (country, city, address1, address2, addressType, zipCode) => async (dispatch) => {
   try {
     dispatch(updateUserAddressRequest());
+    
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
+      withCredentials: true,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    
     const { data } = await axios.put(
       `${server}/user/update-user-addresses`,
       { country, city, address1, address2, addressType, zipCode },
-      { withCredentials: true },
+      config,
     );
 
     // Update localStorage
@@ -145,6 +176,7 @@ export const updateUserAddress = (country, city, address1, address2, addressType
     if (error.response?.status === 401) {
       dispatch({ type: "LOGOUT_SUCCESS" });
       localStorage.removeItem("userData");
+      localStorage.removeItem("token");
     }
     const errorMessage = error.response?.data?.message || "Failed to update address";
     dispatch(updateUserAddressFailed(errorMessage));
@@ -156,7 +188,22 @@ export const updateUserAddress = (country, city, address1, address2, addressType
 export const deleteUserAddress = (id) => async (dispatch) => {
   try {
     dispatch(deleteUserAddressRequest());
-    const { data } = await axios.delete(`${server}/user/delete-user-address/${id}`, { withCredentials: true });
+    
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    
+    const config = {
+      withCredentials: true,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    
+    const { data } = await axios.delete(`${server}/user/delete-user-address/${id}`, config);
 
     // Update localStorage
     if (data.user) {
@@ -169,6 +216,7 @@ export const deleteUserAddress = (id) => async (dispatch) => {
     if (error.response?.status === 401) {
       dispatch({ type: "LOGOUT_SUCCESS" });
       localStorage.removeItem("userData");
+      localStorage.removeItem("token");
     }
     const errorMessage = error.response?.data?.message || "Failed to delete address";
     dispatch(deleteUserAddressFailed(errorMessage));
