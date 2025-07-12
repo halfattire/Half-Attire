@@ -38,7 +38,13 @@ export function Providers({ children }) {
       try {
         store.dispatch(getAllProducts());
         store.dispatch(getAllEvents());
-        store.dispatch(loadSeller());
+        
+        // Load seller authentication if seller token exists
+        const sellerToken = localStorage.getItem("seller_token");
+        if (sellerToken) {
+          store.dispatch(loadSeller());
+        }
+        
         // Stripe API key loading commented out
         // await getStripeApiKey();
       } catch (error) {

@@ -69,6 +69,11 @@ function ShopLogin() {
           localStorage.setItem("seller_token", res.data.token)
         }
 
+        // Store seller data in localStorage
+        if (res.data.shop) {
+          localStorage.setItem("sellerData", JSON.stringify(res.data.shop))
+        }
+
         dispatch(loadSellerSuccess(res.data.shop))
 
         if (rememberMe) {

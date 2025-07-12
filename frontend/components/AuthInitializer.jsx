@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadUserSuccess } from '../redux/reducers/user';
+import { loadSellerSuccess } from '../redux/reducers/seller';
+import { getUserToken, getSellerToken } from '../lib/token-persistence';
 
 /**
  * Authentication initialization component
@@ -12,6 +14,7 @@ import { loadUserSuccess } from '../redux/reducers/user';
 export default function AuthInitializer({ children }) {
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isSeller, seller } = useSelector((state) => state.seller);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -20,58 +23,69 @@ export default function AuthInitializer({ children }) {
 
     const initializeAuth = () => {
       try {
-        // Check if we already have user data
-        if (isAuthenticated && user) {
-          setIsInitialized(true);
-          return;
-        }
-
-        // Try to get user data from localStorage
-        const userData = localStorage.getItem('userData');
-        const token = localStorage.getItem('token');
-        
-        if (userData && token) {
-          try {
-            const parsedUserData = JSON.parse(userData);
-            
-            // Validate user data structure
-            if (parsedUserData && parsedUserData._id && parsedUserData.email) {
-              dispatch(loadUserSuccess(parsedUserData));
-            } else {
+        // Initialize user authentication
+        if (!isAuthenticated || !user) {
+          const userData = localStorage.getItem('userData');
+          const userToken = getUserToken();
+          
+          if (userData && userToken) {
+            try {
+              const parsedUserData = JSON.parse(userData);
+              
+              // Validate user data structure
+              if (parsedUserData && parsedUserData._id && parsedUserData.email) {
+                dispatch(loadUserSuccess(parsedUserData));
+              } else {
+                localStorage.removeItem('userData');
+                localStorage.removeItem('token');
+              }
+            } catch (parseError) {
+              console.error('Error parsing user data from localStorage:', parseError);
+              // Clear corrupted data
               localStorage.removeItem('userData');
               localStorage.removeItem('token');
             }
-          } catch (parseError) {
-            console.error('Error parsing user data from localStorage:', parseError);
-            // Clear corrupted data
-            localStorage.removeItem('userData');
-            localStorage.removeItem('token');
           }
-        } else {
-          // No authentication data found
         }
-        
+
+        // Initialize seller authentication
+        if (!isSeller || !seller) {
+          const sellerData = localStorage.getItem('sellerData');
+          const sellerToken = getSellerToken();
+          
+          if (sellerData && sellerToken) {
+            try {
+              const parsedSellerData = JSON.parse(sellerData);
+              
+              // Validate seller data structure
+              if (parsedSellerData && parsedSellerData._id && parsedSellerData.email) {
+                dispatch(loadSellerSuccess(parsedSellerData));
+              } else {
+                localStorage.removeItem('sellerData');
+                localStorage.removeItem('seller_token');
+              }
+            } catch (parseError) {
+              console.error('Error parsing seller data from localStorage:', parseError);
+              // Clear corrupted data
+              localStorage.removeItem('sellerData');
+              localStorage.removeItem('seller_token');
+            }
+          }
+        }
+
         setIsInitialized(true);
       } catch (error) {
-        console.error('Error initializing authentication:', error);
+        console.error('Error during auth initialization:', error);
         setIsInitialized(true);
       }
     };
 
-    // Small delay to ensure DOM is ready
-    const timeoutId = setTimeout(initializeAuth, 100);
-    
-    return () => clearTimeout(timeoutId);
-  }, [dispatch, isAuthenticated, user]);
+    // Small delay to ensure proper hydration
+    const timer = setTimeout(initializeAuth, 100);
 
-  // Don't render children until auth is initialized
-  if (!isInitialized) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+    return () => clearTimeout(timer);
+  }, [dispatch, isAuthenticated, user, isSeller, seller]);
 
+  // Always render children, authentication state will be managed in Redux
   return children;
 }

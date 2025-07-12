@@ -42,6 +42,7 @@ function ShopInfo({ isOwner }) {
     try {
       // First, clear any localStorage items
       localStorage.removeItem("seller_token")
+      localStorage.removeItem("sellerData")
   
       // Then make the logout request
       const res = await axios.get(`${server}/shop/logout`, {
@@ -51,10 +52,15 @@ function ShopInfo({ isOwner }) {
       toast.success(res.data.message)
   
       // Force a hard refresh to ensure all state is cleared
-      window.location.href = "/login"
+      window.location.href = "/shop-login"
     } catch (error) {
       console.error("Logout error:", error)
       toast.error(error.response?.data?.message || "Logout failed")
+      
+      // Even if logout fails, clear local data and redirect
+      localStorage.removeItem("seller_token")
+      localStorage.removeItem("sellerData")
+      window.location.href = "/shop-login"
     }
   }
 

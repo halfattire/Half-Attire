@@ -14,23 +14,33 @@ export const getSeller = () => async (dispatch) => {
   try {
     dispatch(loadSellerRequest())
     
-    // Get token from localStorage
-    const token = localStorage.getItem("token");
+    // Get seller token from localStorage
+    const sellerToken = localStorage.getItem("seller_token");
     
     const config = {
       withCredentials: true,
     };
 
-    // Add Authorization header if token exists
-    if (token) {
+    // Add Authorization header if seller token exists
+    if (sellerToken) {
       config.headers = {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${sellerToken}`,
       };
     }
 
     const { data } = await axios.get(`${server}/shop/getSeller`, config)
+
+    // Always store/update seller token if provided in response
+    if (data.token) {
+      localStorage.setItem("seller_token", data.token);
+    }
+
     dispatch(loadSellerSuccess(data.seller))
   } catch (error) {
+    // Clear seller token if it's invalid
+    if (error.response?.status === 401) {
+      localStorage.removeItem("seller_token");
+    }
     dispatch(loadSellerFail(error.response?.data?.message || "Failed to load seller"))
   }
 }
@@ -40,7 +50,7 @@ export const getAllSellers = () => async (dispatch) => {
   try {
     dispatch(getAllSellerRequest())
 
-    // Get token from localStorage
+    // Get admin token from localStorage (not seller token)
     const token = localStorage.getItem("token");
     
     const config = {
@@ -60,6 +70,27 @@ export const getAllSellers = () => async (dispatch) => {
   } catch (error) {
     console.error("Sellers fetch error:", error)
     dispatch(getAllSellerFailed(error.response?.data?.message || "Failed to fetch sellers"))
+  }
+}
+
+// Seller logout action
+export const logoutSeller = () => async (dispatch) => {
+  try {
+    // Clear seller token from localStorage
+    localStorage.removeItem("seller_token");
+    
+    // Call backend logout endpoint
+    await axios.get(`${server}/shop/logout`, {
+      withCredentials: true,
+    });
+
+    // Clear seller state in Redux
+    dispatch(loadSellerFail("Seller logged out"));
+  } catch (error) {
+    console.error("Seller logout error:", error);
+    // Even if backend logout fails, clear local state
+    localStorage.removeItem("seller_token");
+    dispatch(loadSellerFail("Seller logged out"));
   }
 }
 

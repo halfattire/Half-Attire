@@ -39,8 +39,13 @@ export const loadUser = () => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       };
     }
-    
+
     const { data } = await axios.get(`${server}/user/getuser`, config);
+
+    // Always store/update token if provided in response
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+    }
 
     // Store user data using the persistence service
     if (data.user && data.token) {
@@ -53,7 +58,6 @@ export const loadUser = () => async (dispatch) => {
     dispatch(loadUserSuccess(data.user));
   } catch (error) {
     // Error loading user
-
     // If we get 401, user is not authenticated - clear everything
     if (error.response?.status === 401) {
       clearAuthFromStorage();
@@ -88,11 +92,34 @@ export const logout = () => async (dispatch) => {
 export const loadSeller = () => async (dispatch) => {
   try {
     dispatch(loadSellerRequest());
-    const { data } = await axios.get(`${server}/shop/getSeller`, {
+    
+    // Get seller token from localStorage
+    const sellerToken = localStorage.getItem("seller_token");
+    
+    const config = {
       withCredentials: true,
-    });
+    };
+
+    // Add Authorization header if seller token exists
+    if (sellerToken) {
+      config.headers = {
+        Authorization: `Bearer ${sellerToken}`,
+      };
+    }
+
+    const { data } = await axios.get(`${server}/shop/getSeller`, config);
+
+    // Always store/update seller token if provided in response
+    if (data.token) {
+      localStorage.setItem("seller_token", data.token);
+    }
+
     dispatch(loadSellerSuccess(data.seller));
   } catch (error) {
+    // Clear seller token if it's invalid
+    if (error.response?.status === 401) {
+      localStorage.removeItem("seller_token");
+    }
     dispatch(loadSellerFail(error.response?.data?.message || "Failed to load seller"));
   }
 };
