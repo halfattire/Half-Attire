@@ -193,7 +193,7 @@ function Header() {
             <div className="flex items-center space-x-4">
               {/* Admin Panel Button */}
               <Link
-                href={user?.role === "admin" ? "/admin" : "#"}
+                href={user?.role === "admin" ? "/dashboard" : "#"}
                 onClick={(e) => {
                   if (!isAuthenticated) {
                     e.preventDefault()

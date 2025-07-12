@@ -144,6 +144,9 @@ export default function Login() {
       );
       if (res.data.success) {
         // Store authentication data using the persistence service
+        console.log('Login successful, user data:', res.data.user);
+        console.log('Login successful, token:', res.data.token);
+        
         localStorage.setItem("userData", JSON.stringify(res.data.user));
         localStorage.setItem("token", res.data.token);
         
@@ -179,7 +182,7 @@ export default function Login() {
       </Link>
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
-          <div className="mt-10 w-full rounded-lg bg-white shadow sm:max-w-sm md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
+          <div className="mt-10 w-full max-w-xs mx-auto rounded-lg bg-white shadow md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
             <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
