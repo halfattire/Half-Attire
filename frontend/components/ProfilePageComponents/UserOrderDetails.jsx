@@ -33,28 +33,54 @@ function UserOrderDetails() {
   const data = orders && orders.find((item) => item._id === id);
 
   const reviewHandler = async (e) => {
-    await axios
-      .put(
-        `${server}/product/create-new-review`,
-        {
-          user,
-          rating,
-          comment,
-          productId: selectedItem?._id,
-          orderId: id,
-        },
-        { withCredentials: true },
-      )
-      .then((res) => {
-        toast.success(res.data.message);
-        dispatch(getAllOrdersOfUser(user._id));
-        setComment("");
-        setRating(null);
-        setOpen(false);
-      })
-      .catch((error) => {
-        toast.error(error);
-      });
+    // Validate required data
+    if (!selectedItem) {
+      toast.error("No item selected for review");
+      return;
+    }
+    
+    if (!selectedItem._id) {
+      toast.error("Invalid item data for review");
+      return;
+    }
+    
+    if (!rating || rating < 1) {
+      toast.error("Please provide a rating");
+      return;
+    }
+    
+    if (!comment?.trim()) {
+      toast.error("Please write a comment for your review");
+      return;
+    }
+
+    try {
+      await axios
+        .put(
+          `${server}/product/create-new-review`,
+          {
+            user,
+            rating,
+            comment: comment.trim(),
+            productId: selectedItem._id,
+            orderId: id,
+          },
+          { withCredentials: true },
+        )
+        .then((res) => {
+          toast.success(res.data.message);
+          dispatch(getAllOrdersOfUser(user._id));
+          setComment("");
+          setRating(null);
+          setSelectedItem(null);
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.response?.data?.message || "Failed to submit review");
+        });
+    } catch (error) {
+      toast.error("An error occurred while submitting your review");
+    }
   };
 
   const refundHandler = async () => {
@@ -176,13 +202,18 @@ function UserOrderDetails() {
       </Link>
 
       {/* review popup */}
-      {open && (
+      {open && selectedItem && (
         <div className="fixed left-0 top-0 z-[500] flex h-screen w-full items-center justify-center bg-gray-800/50 p-6 shadow-sm">
           <div className="custom-scrollbar max-h-[90vh] w-full max-w-3xl overflow-y-auto overflow-x-hidden rounded-md bg-[#fff] p-3 shadow">
             <div className="flex w-full justify-end p-3">
               <RxCross1
                 size={30}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  setSelectedItem(null);
+                  setComment("");
+                  setRating(null);
+                }}
                 className="cursor-pointer"
               />
             </div>
@@ -261,8 +292,13 @@ function UserOrderDetails() {
               ></textarea>
             </div>
             <button
-              className={`ml-3 rounded-md bg-blue-500 px-6 py-2 text-lg text-white hover:bg-blue-600`}
-              onClick={rating > 1 ? reviewHandler : null}
+              className={`ml-3 rounded-md px-6 py-2 text-lg text-white transition-colors ${
+                rating > 0 && comment?.trim() && selectedItem?._id
+                  ? "bg-blue-500 hover:bg-blue-600 cursor-pointer"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+              onClick={rating > 0 && comment?.trim() && selectedItem?._id ? reviewHandler : null}
+              disabled={!rating || !comment?.trim() || !selectedItem?._id}
             >
               Submit
             </button>
