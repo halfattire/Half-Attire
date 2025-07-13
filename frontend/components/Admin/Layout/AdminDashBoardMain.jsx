@@ -28,23 +28,27 @@ const AdminDashboardMain = () => {
 
   // Fetch data function
   const fetchData = useCallback(async () => {
-    if (!user || user.role !== "admin") {
+    if (!user || !user.role || user.role.toLowerCase() !== "admin") {
+      console.log("AdminDashboard: User not admin, skipping data fetch. User role:", user?.role);
       return;
     }
 
+    console.log("AdminDashboard: Fetching admin data...");
     try {
       await dispatch(getAllOrdersOfAdmin());
       await dispatch(getAllSellers());
       setLastRefresh(new Date());
       setIsInitialized(true);
+      console.log("AdminDashboard: Data fetch completed successfully");
     } catch (error) {
-      console.error("Error fetching admin data:", error);
+      console.error("AdminDashboard: Error fetching admin data:", error);
     }
   }, [dispatch, user]);
 
   // Effect to trigger data fetch
   useEffect(() => {
-    if (user && user.role === "admin" && !isInitialized) {
+    if (user && user.role && user.role.toLowerCase() === "admin" && !isInitialized) {
+      console.log("AdminDashboard: Triggering initial data fetch for admin user");
       fetchData();
     }
   }, [user, fetchData, isInitialized]);

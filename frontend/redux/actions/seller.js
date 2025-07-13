@@ -1,6 +1,29 @@
 import { server } from "../../lib/server"
-import axios from "axios"
-import {
+import axios // Get all sellers --- only for admin
+export const getAllSellers = () => async (dispatch) => {
+  try {
+    dispatch(getAllSellerRequest())
+
+    // Get admin token from localStorage (not seller token)
+    const token = localStorage.getItem("token");
+    console.log("🔍 getAllSellers - Admin token available:", token ? "Yes" : "No");
+    
+    const config = {
+      withCredentials: true,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      console.log("✅ Added admin token to sellers request");
+    } else {
+      console.error("❌ No admin token available for sellers request!");
+    }
+
+    console.log("📡 Making admin sellers request to:", `${server}/shop/admin-all-sellers`);
+    const { data } = await axios.get(`${server}/shop/admin-all-sellers`, config) {
   loadSellerRequest,
   loadSellerSuccess,
   loadSellerFail,

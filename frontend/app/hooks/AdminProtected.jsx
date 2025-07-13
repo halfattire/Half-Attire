@@ -13,10 +13,13 @@ export const AdminProtected = ({ children }) => {
   useEffect(() => {    
     if (!loading) {
       if (!user) {
+        console.log("AdminProtected: No user found, redirecting to home");
         router.push("/")
-      } else if (user.role !== "admin") {
+      } else if (!user.role || user.role.toLowerCase() !== "admin") {
+        console.log("AdminProtected: User role not admin:", user.role, "redirecting to home");
         router.push("/")
       } else {
+        console.log("AdminProtected: User is admin, granting access");
         setIsChecking(false)
       }
     }
@@ -30,7 +33,7 @@ export const AdminProtected = ({ children }) => {
     )
   }
 
-  if (user?.role === "admin") {
+  if (user?.role && user.role.toLowerCase() === "admin") {
     return children
   }
 

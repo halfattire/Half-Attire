@@ -41,6 +41,7 @@ export const getAllOrdersOfAdmin = () => async (dispatch) => {
 
     // Get token from localStorage
     const token = localStorage.getItem("token");
+    console.log("🔍 getAllOrdersOfAdmin - Token available:", token ? "Yes" : "No");
     
     const config = {
       withCredentials: true,
@@ -52,8 +53,12 @@ export const getAllOrdersOfAdmin = () => async (dispatch) => {
     // Add Authorization header if token exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("✅ Added user token to admin orders request");
+    } else {
+      console.error("❌ No user token available for admin orders request!");
     }
 
+    console.log("📡 Making admin orders request to:", `${server}/order/admin-all-orders`);
     const { data } = await axios.get(`${server}/order/admin-all-orders`, config);
 
     if (data.success && Array.isArray(data.orders)) {
