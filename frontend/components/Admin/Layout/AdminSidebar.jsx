@@ -79,9 +79,9 @@ const AdminSidebar = ({ onLinkClick }) => {
   ]
 
   return (
-    <div className="w-full h-full bg-white shadow-xl border-r border-gray-200 flex flex-col">
+    <div className="w-full h-full bg-white shadow-xl border-r border-gray-200 flex flex-col overflow-hidden">
       {/* Header Section */}
-      <div className="p-4 sm:p-6 border-b border-gray-200 bg-white">
+      <div className="flex-shrink-0 p-4 sm:p-6 border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
             <MdOutlineSettings className="text-white text-lg sm:text-xl" />
@@ -93,8 +93,8 @@ const AdminSidebar = ({ onLinkClick }) => {
         </div>
       </div>
 
-      {/* Navigation Menu */}
-      <nav className="flex-1 mt-2 px-2 sm:px-3 pb-6">
+      {/* Navigation Menu - Scrollable */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden mt-2 px-2 sm:px-3 pb-6">
         <div className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon

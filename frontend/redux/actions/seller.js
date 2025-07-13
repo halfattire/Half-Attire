@@ -1,5 +1,5 @@
-import { server } from "../../lib/server"
-import axios from "axios"
+import { server } from "../../lib/server";
+import axios from "axios";
 import {
   loadSellerRequest,
   loadSellerSuccess,
@@ -7,12 +7,12 @@ import {
   getAllSellerRequest,
   getAllSellerSuccess,
   getAllSellerFailed,
-} from "../reducers/seller"
+} from "../reducers/seller";
 
 // getSeller - KEEPING EXISTING FUNCTION NAME
 export const getSeller = () => async (dispatch) => {
   try {
-    dispatch(loadSellerRequest())
+    dispatch(loadSellerRequest());
     
     // Get seller token from localStorage
     const sellerToken = localStorage.getItem("seller_token");
@@ -30,7 +30,7 @@ export const getSeller = () => async (dispatch) => {
       console.log("✅ Added seller token to getSeller request");
     }
 
-    const { data } = await axios.get(`${server}/shop/getSeller`, config)
+    const { data } = await axios.get(`${server}/shop/getSeller`, config);
 
     console.log("getSeller: Received response, has token:", data.token ? "Yes" : "No");
 
@@ -46,7 +46,7 @@ export const getSeller = () => async (dispatch) => {
       console.log("getSeller: Updated sellerData in localStorage");
     }
 
-    dispatch(loadSellerSuccess(data.seller))
+    dispatch(loadSellerSuccess(data.seller));
   } catch (error) {
     console.error("getSeller error:", error);
     // Clear seller token if it's invalid
@@ -55,14 +55,14 @@ export const getSeller = () => async (dispatch) => {
       localStorage.removeItem("sellerData");
       console.log("getSeller: Cleared invalid seller tokens");
     }
-    dispatch(loadSellerFail(error.response?.data?.message || "Failed to load seller"))
+    dispatch(loadSellerFail(error.response?.data?.message || "Failed to load seller"));
   }
-}
+};
 
 // Get all sellers --- only for admin
 export const getAllSellers = () => async (dispatch) => {
   try {
-    dispatch(getAllSellerRequest())
+    dispatch(getAllSellerRequest());
 
     // Get admin token from localStorage (not seller token)
     const token = localStorage.getItem("token");
@@ -83,14 +83,14 @@ export const getAllSellers = () => async (dispatch) => {
     }
 
     console.log("📡 Making admin sellers request to:", `${server}/shop/admin-all-sellers`);
-    const { data } = await axios.get(`${server}/shop/admin-all-sellers`, config)
+    const { data } = await axios.get(`${server}/shop/admin-all-sellers`, config);
 
-    dispatch(getAllSellerSuccess(data.sellers))
+    dispatch(getAllSellerSuccess(data.sellers));
   } catch (error) {
-    console.error("Sellers fetch error:", error)
-    dispatch(getAllSellerFailed(error.response?.data?.message || "Failed to fetch sellers"))
+    console.error("Sellers fetch error:", error);
+    dispatch(getAllSellerFailed(error.response?.data?.message || "Failed to fetch sellers"));
   }
-}
+};
 
 // Seller logout action
 export const logoutSeller = () => async (dispatch) => {
@@ -114,5 +114,5 @@ export const logoutSeller = () => async (dispatch) => {
     localStorage.removeItem("sellerData");
     dispatch(loadSellerFail("Seller logged out"));
   }
-}
+};
 
