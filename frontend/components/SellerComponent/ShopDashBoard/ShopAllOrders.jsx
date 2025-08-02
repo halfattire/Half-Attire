@@ -12,13 +12,29 @@ import { getAllOrdersOfShop } from "../../../redux/actions/order";
 function ShopAllOrders() {
   const { orders, isLoading } = useSelector((state) => state.orders);
   const { seller } = useSelector((state) => state.seller);
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  // Check if user is admin
+  const isAdmin = user?.role && user.role.toLowerCase() === "admin";
 
   useEffect(() => {
     if (seller?._id) {
       dispatch(getAllOrdersOfShop(seller._id));
     }
-  }, [dispatch, seller._id]);
+  }, [dispatch, seller?._id]);
+
+  // Show loading state for non-admin users without seller data
+  if (!seller && !isAdmin) {
+    return (
+      <div className="w-full p-8">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Loading Orders...</h2>
+          <p className="text-gray-600">Please wait while we load your order information.</p>
+        </div>
+      </div>
+    );
+  }
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },

@@ -15,18 +15,36 @@ import Loader from "@/components/Loader";
 function ShopAllProducts() {
   const { products, isLoading } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  // Check if user is admin
+  const isAdmin = user?.role && user.role.toLowerCase() === "admin";
 
   useEffect(() => {
     if (seller?._id) {
       dispatch(getAllShopProducts(seller._id));
     }
-  }, [dispatch, seller._id]);
+  }, [dispatch, seller?._id]);
 
   const handleDelete = async (id) => {
-    await dispatch(deleteShopProducts(id));
-    dispatch(getAllShopProducts(seller._id)); // Refresh products without reload
+    if (seller?._id) {
+      await dispatch(deleteShopProducts(id));
+      dispatch(getAllShopProducts(seller._id)); // Refresh products without reload
+    }
   };
+
+  // Show loading state for non-admin users without seller data
+  if (!seller && !isAdmin) {
+    return (
+      <div className="w-full p-8">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Loading Products...</h2>
+          <p className="text-gray-600">Please wait while we load your product information.</p>
+        </div>
+      </div>
+    );
+  }
 
   const columns = [
     {

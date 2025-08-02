@@ -1,5 +1,53 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Performance optimizations
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@mui/material', '@mui/icons-material', 'lodash'],
+  },
+  
+  // Turbopack configuration (stable since Next.js 14)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
+  
+  // Build optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  // Performance configurations
+  poweredByHeader: false,
+  reactStrictMode: true,
+  
+  // Simplified webpack optimizations
+  webpack: (config: any, { dev, isServer }: { dev: boolean; isServer: boolean }) => {
+    // Only apply basic optimizations to avoid chunk loading issues
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: ['**/node_modules', '**/.git', '**/.next'],
+      };
+    }
+    
+    // Fallback for node modules that might not be available on the client
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+      crypto: false,
+    };
+    
+    return config;
+  },
+
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.shopify.com", pathname: "**" },

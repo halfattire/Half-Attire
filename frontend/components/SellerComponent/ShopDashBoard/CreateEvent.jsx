@@ -12,6 +12,8 @@ import Image from "next/image";
 
 function CreateEvent() {
   const { seller } = useSelector((state) => state.seller);
+  const { user } = useSelector((state) => state.user);
+  const isAdmin = user && user.role === "Admin";
   const { success, error } = useSelector((state) => state.events);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -155,7 +157,14 @@ function CreateEvent() {
     }
   };
 
-  return (
+  return isAdmin && !seller?._id ? (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <h3 className="text-lg font-medium text-gray-700 mb-2">Admin Access</h3>
+        <p className="text-gray-500">Event creation is available for seller accounts only.</p>
+      </div>
+    </div>
+  ) : (
     <section className="bg-white sm:py-4 dark:bg-gray-900">
       <div className="mx-auto flex h-[90vh] flex-col items-center justify-center overflow-y-auto px-2 py-2 sm:px-6 sm:py-8 md:h-[80vh] lg:py-0">
         <div className="custom-scrollbar w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">

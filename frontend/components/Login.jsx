@@ -179,41 +179,46 @@ export default function Login() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <Link href="/">
-        <span className="absolute mx-6 my-4 flex h-8 w-12 items-center justify-center rounded-md bg-blue-500 p-2 text-white shadow-sm">
-          <FaArrowLeftLong size={20} />
+        <span className="absolute top-4 left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition-colors">
+          <FaArrowLeftLong size={18} />
         </span>
       </Link>
 
-      <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
-          <div className="mt-10 w-full max-w-sm mx-auto rounded-lg bg-white shadow md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
-            <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Sign in to your account
-              </h1>
+      <div className="flex min-h-screen items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md">
+          <div className="rounded-2xl bg-white shadow-xl border-0 overflow-hidden dark:bg-gray-800 dark:shadow-2xl">
+            <div className="px-8 py-10">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  Welcome Back
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Sign in to your account to continue
+                </p>
+              </div>
 
               <LoadingButton
                 onClick={handleGoogleClick}
                 loading={googleLoading}
                 variant="outline"
-                className="w-full border-gray-300 text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 mb-6 py-3 rounded-xl font-medium transition-all duration-200"
               >
-                <FcGoogle className="h-5 w-5 mr-2" />
+                <FcGoogle className="h-5 w-5 mr-3" />
                 Continue with Google
               </LoadingButton>
 
-              <div className="flex items-center">
-                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
-                <div className="px-3 text-gray-500 text-sm dark:text-gray-400">or</div>
-                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+              <div className="flex items-center mb-6">
+                <div className="flex-1 border-t border-gray-200 dark:border-gray-600"></div>
+                <div className="px-4 text-gray-500 text-sm dark:text-gray-400 font-medium">or</div>
+                <div className="flex-1 border-t border-gray-200 dark:border-gray-600"></div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                    Your email
+                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Email address
                   </label>
                   <input
                     type="email"
@@ -221,14 +226,15 @@ export default function Login() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    placeholder="name@company.com"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-400"
+                    placeholder="Enter your email"
                     required
                     disabled={loading}
                   />
                 </div>
+                
                 <div>
-                  <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Password
                   </label>
                   <div className="relative">
@@ -238,55 +244,59 @@ export default function Login() {
                       id="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-400"
+                      placeholder="Enter your password"
                       required
                       disabled={loading}
                     />
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5">
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibility}
-                        className="focus:outline-none"
-                        disabled={loading}
-                      >
-                        {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-gray-300"
+                      disabled={loading}
+                    >
+                      {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                    </button>
                   </div>
                 </div>
+
                 <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    <div className="flex h-5 items-center">
-                      <input
-                        id="remember"
-                        type="checkbox"
-                        className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                        disabled={loading}
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">
-                        Remember me
-                      </label>
-                    </div>
-                  </div>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      id="remember"
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      disabled={loading}
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
+                    <span className="ml-3 text-sm text-gray-600 dark:text-gray-400">
+                      Remember me
+                    </span>
+                  </label>
                 </div>
-                <LoadingButton type="submit" loading={loading} className="w-full">
+
+                <LoadingButton 
+                  type="submit" 
+                  loading={loading} 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
                   Sign in
                 </LoadingButton>
-                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Don&apos;t have an account yet?{" "}
-                  <Link href="/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
-                    Sign up
-                  </Link>
-                </p>
+
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Don&apos;t have an account?{" "}
+                    <Link href="/register" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                      Create account
+                    </Link>
+                  </p>
+                </div>
               </form>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   )
 }

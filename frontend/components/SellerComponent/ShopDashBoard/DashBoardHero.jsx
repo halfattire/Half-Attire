@@ -16,13 +16,18 @@ function DashBoardHero() {
   const dispatch = useDispatch()
   const { orders, isLoading } = useSelector((state) => state.orders)
   const { seller } = useSelector((state) => state.seller)
+  const { user } = useSelector((state) => state.user)
   const { products } = useSelector((state) => state.products)
   const [deliveredOrder, setDeliveredOrder] = useState(null)
   const [refreshLoading, setRefreshLoading] = useState(false)
 
+  // Check if user is admin
+  const isAdmin = user?.role && user.role.toLowerCase() === "admin"
+
   // NEW: Add refresh interval and force refresh on mount
   useEffect(() => {
-    if (seller?._id) {
+    // For sellers, fetch their specific data
+    if (seller?._id && !isAdmin) {
       // Initial fetch
       dispatch(getAllOrdersOfShop(seller._id))
       dispatch(getAllShopProducts(seller._id))
@@ -34,7 +39,9 @@ function DashBoardHero() {
 
       return () => clearInterval(interval)
     }
-  }, [dispatch, seller._id])
+    // For admins, we'll show a general dashboard without seller-specific data
+    // The component will handle the empty state gracefully
+  }, [dispatch, seller?._id, isAdmin])
 
   // NEW: Separate useEffect for delivered orders calculation
   useEffect(() => {
@@ -46,14 +53,27 @@ function DashBoardHero() {
 
   // NEW: Add manual refresh function
   const handleRefreshOrders = async () => {
-    if (seller?._id) {
+    // Only refresh for sellers with valid seller datab
+    if (seller?._id && !isAdmin) {
       setRefreshLoading(true)
       try {
-        await dispatch(getAllOrdersOfShop(seller._id))
+        await dispatch(getAllOrdersOfShop(seller?._id))
       } finally {
         setRefreshLoading(false)
       }
     }
+  }
+
+  // If seller data is not available yet (and user is not admin), show loading
+  if (!seller && !isAdmin) {
+    return (
+      <div className="w-full p-8">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Loading Seller Dashboard...</h2>
+          <p className="text-gray-600">Please wait while we load your seller information.</p>
+        </div>
+      </div>
+    )
   }
 
   const totalEarningWithoutTax = deliveredOrder && deliveredOrder.reduce((acc, item) => acc + item.totalPrice, 0)

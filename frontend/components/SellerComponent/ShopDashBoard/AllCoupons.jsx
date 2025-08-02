@@ -14,6 +14,7 @@ import { toast } from "react-toastify"
 function AllCoupons() {
   const { products } = useSelector((state) => state.products)
   const { seller } = useSelector((state) => state.seller)
+  const { user } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const [modalOpen, setModalOpen] = useState(false)
   const [name, setName] = useState("")
@@ -24,6 +25,9 @@ function AllCoupons() {
   const [selectedProducts, setSelectedProducts] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+
+  // Check if user is admin
+  const isAdmin = user?.role && user.role.toLowerCase() === "admin"
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -51,8 +55,14 @@ function AllCoupons() {
           setIsLoading(false)
           console.error("Error fetching coupons:", error)
         })
+    } else if (isAdmin) {
+      // Admin users don't have seller data, show empty state or admin message
+      setIsLoading(false)
+      setCoupons([])
+    } else {
+      setIsLoading(false)
     }
-  }, [dispatch, seller?._id])
+  }, [dispatch, seller?._id, isAdmin])
 
   const handleDelete = async (id) => {
     try {
@@ -70,6 +80,13 @@ function AllCoupons() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Null safety check for seller._id
+    if (!seller?._id) {
+      toast.error("Unable to create coupon: seller information not available")
+      return
+    }
+    
     try {
       await axios.post(
         `${server}/couponscode/create-coupon`,
@@ -86,11 +103,13 @@ function AllCoupons() {
       toast.success("Coupon code created successfully!")
       setModalOpen(false)
       // Refresh coupons without reloading the page
-      axios
-        .get(`${server}/couponscode/get-coupons/${seller._id}`, {
-          withCredentials: true,
-        })
-        .then((res) => setCoupons(res.data.couponCodes || []))
+      if (seller?._id) {
+        axios
+          .get(`${server}/couponscode/get-coupons/${seller._id}`, {
+            withCredentials: true,
+          })
+          .then((res) => setCoupons(res.data.couponCodes || []))
+      }
       // Reset form
       setName("")
       setValue("")
@@ -188,6 +207,13 @@ function AllCoupons() {
 
   return isLoading ? (
     <Loader />
+  ) : isAdmin && !seller?._id ? (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <h3 className="text-lg font-medium text-gray-700 mb-2">Admin Access</h3>
+        <p className="text-gray-500">Coupon management is available for seller accounts only.</p>
+      </div>
+    </div>
   ) : (
     <>
       <div className="relative mb-4">

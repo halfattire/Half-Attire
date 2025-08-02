@@ -59,15 +59,34 @@ function Header() {
     setShowUserMenu(false)
 
     try {
-      console.log("Header: Starting logout...")
+      console.log("🚪 Header: Starting logout process...")
+      
+      // Dispatch logout action
       const result = await dispatch(logout())
-      console.log("Header: Logout result:", result)
+      console.log("✅ Header: Logout completed:", result)
 
+      // Force clear any remaining authentication state
+      localStorage.removeItem('userData');
+      localStorage.removeItem('token');
+      localStorage.removeItem('sellerData');
+      localStorage.removeItem('seller_token');
+      
       // Redirect to home page after logout
       router.push("/")
+      
+      // Note: Toast notification is handled in auth-service.js to avoid duplicates
     } catch (error) {
-      console.error("Header: Logout error:", error)
-      toast.error("Logout failed")
+      console.error("❌ Header: Logout error:", error)
+      
+      // Force clear authentication state even on error
+      localStorage.removeItem('userData');
+      localStorage.removeItem('token');
+      localStorage.removeItem('sellerData');
+      localStorage.removeItem('seller_token');
+      
+      // Show error toast only if logout completely fails
+      toast.error("Logout completed with issues")
+      router.push("/")
     } finally {
       setIsLoggingOut(false)
     }

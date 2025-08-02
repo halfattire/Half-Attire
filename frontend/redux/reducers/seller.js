@@ -39,6 +39,16 @@ const sellerSlice = createSlice({
       state.error = action.payload;
       state.isSeller = false;
     },
+    
+    // Logout seller
+    logoutSuccess: (state) => {
+      state.isSeller = false;
+      state.seller = null;
+      state.isLoading = false;
+      state.error = null;
+      state.sellers = [];
+    },
+    
     clearErrors: (state) => {
       state.error = null;
     },
@@ -52,6 +62,7 @@ export const {
   getAllSellerRequest,
   getAllSellerSuccess,
   getAllSellerFailed,
+  logoutSuccess,
   clearErrors,
 } = sellerSlice.actions;
 

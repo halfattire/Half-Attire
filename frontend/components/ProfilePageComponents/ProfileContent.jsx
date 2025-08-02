@@ -4,6 +4,7 @@ import ChangePassword from "./ChangePassword";
 import Profile from "./Profile";
 import TrackOrders from "./TrackOrders";
 import UserAddress from "./UserAddress";
+import UserInbox from "./UserInbox";
 
 function ProfileContent({ active }) {
   return (
@@ -16,6 +17,9 @@ function ProfileContent({ active }) {
 
       {/* refund ordres */}
       {active === 3 && <AllRefundOrders />}
+
+      {/* inbox */}
+      {active === 4 && <UserInbox />}
 
       {/* track ordres */}
       {active === 5 && <TrackOrders />}

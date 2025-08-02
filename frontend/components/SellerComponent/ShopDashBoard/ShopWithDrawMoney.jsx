@@ -23,6 +23,8 @@ function ShopWithDrawMoney() {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.orders);
   const { seller } = useSelector((state) => state.seller);
+  const { user } = useSelector((state) => state.user);
+  const isAdmin = user && user.role === "Admin";
   
   const [withdrawData, setWithdrawData] = useState({
     amount: "",
@@ -54,8 +56,16 @@ function ShopWithDrawMoney() {
     if (seller?._id) {
       dispatch(getAllOrdersOfShop(seller._id));
       fetchWithdrawHistory();
+    } else if (isAdmin) {
+      // Admin users don't have seller data, show empty state or admin message
+      setStats({
+        availableBalance: 0,
+        totalWithdrawn: 0,
+        pendingAmount: 0,
+        totalRequests: 0,
+      });
     }
-  }, [dispatch, seller?._id]);
+  }, [dispatch, seller?._id, isAdmin]);
 
   useEffect(() => {
     if (orders && Array.isArray(orders)) {
@@ -198,7 +208,14 @@ function ShopWithDrawMoney() {
     }
   };
 
-  return (
+  return isAdmin && !seller?._id ? (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <h3 className="text-lg font-medium text-gray-700 mb-2">Admin Access</h3>
+        <p className="text-gray-500">Withdrawal management is available for seller accounts only.</p>
+      </div>
+    </div>
+  ) : (
     <div className="h-full w-full p-6 bg-gray-50">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">

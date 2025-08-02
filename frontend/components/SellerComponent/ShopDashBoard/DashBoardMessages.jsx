@@ -19,6 +19,7 @@ const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 function DashBoardMessages() {
   const { user } = useSelector((state) => state.user);
   const { seller } = useSelector((state) => state.seller);
+  const isAdmin = user && user.role === "Admin";
   const [conversation, setConversation] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentChat, setCurrentChat] = useState();
@@ -100,6 +101,12 @@ function DashBoardMessages() {
   const sendMessageHandler = async (e) => {
     e.preventDefault();
 
+    // Null safety check for seller._id
+    if (!seller?._id) {
+      console.error("Cannot send message: seller information not available");
+      return;
+    }
+
     const message = {
       sender: seller._id,
       text: newMessage,
@@ -134,6 +141,12 @@ function DashBoardMessages() {
   };
 
   const updateLastMessage = async () => {
+    // Null safety check for seller._id
+    if (!seller?._id) {
+      console.error("Cannot update last message: seller information not available");
+      return;
+    }
+
     socketId.emit("updateLastMessage", {
       lastMessage: newMessage,
       lastMessageId: seller._id,
@@ -175,7 +188,14 @@ function DashBoardMessages() {
     fetchUserData();
   }, [currentChat?._id, seller?._id]); // Only depend on chat ID and seller ID
 
-  return (
+  return isAdmin && !seller?._id ? (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <h3 className="text-lg font-medium text-gray-700 mb-2">Admin Access</h3>
+        <p className="text-gray-500">Messaging system is available for seller accounts only.</p>
+      </div>
+    </div>
+  ) : (
     <div className="no-scrollbar m-3 h-[82vh] w-[90%] overflow-y-scroll rounded bg-white">
       {!open && (
         <>
@@ -190,7 +210,7 @@ function DashBoardMessages() {
                 index={index}
                 setOpen={setOpen}
                 setCurrentChat={setCurrentChat}
-                me={seller._id}
+                me={seller?._id}
                 setUserData={setUserData}
                 userData={userData}
                 online={onlineCheck(item)}
@@ -209,7 +229,7 @@ function DashBoardMessages() {
           setNewMessage={setNewMessage}
           sendMessageHandler={sendMessageHandler}
           messages={messages}
-          sellerId={seller._id}
+          sellerId={seller?._id}
           userData={userData}
           activeStatus={activeStatus}
           scrollRef={scrollRef}

@@ -60,7 +60,7 @@ function ProfileSidebar({ active, setActive, onItemClick }) {
       id: 4,
       icon: AiOutlineMessage,
       label: "Inbox",
-      onClick: () => handleItemClick(4, "/inbox")
+      onClick: () => handleItemClick(4)
     },
     {
       id: 5,

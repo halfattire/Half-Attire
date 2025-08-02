@@ -76,18 +76,25 @@ export const loadUser = () => async (dispatch) => {
 // Logout action
 export const logout = () => async (dispatch) => {
   try {
+    console.log("🚪 Logout action: Starting logout process...");
+    
+    // Clear Redux state FIRST
+    dispatch({ type: "user/logoutSuccess" });
+    dispatch({ type: "seller/logoutSuccess" });
+    console.log("✅ Logout action: Cleared Redux state");
+
     // Use the comprehensive logout function
     const result = await logoutUser();
-
-    // Clear Redux state regardless of result
-    dispatch({ type: "user/logoutSuccess" });
+    console.log("✅ Logout action: Backend logout completed");
 
     return result;
   } catch (error) {
-    console.error("Logout action error:", error);
+    console.error("❌ Logout action error:", error);
 
     // Clear Redux state even if logout fails
     dispatch({ type: "user/logoutSuccess" });
+    dispatch({ type: "seller/logoutSuccess" });
+    console.log("✅ Logout action: Force cleared Redux state after error");
 
     return { success: false, error };
   }

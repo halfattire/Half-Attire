@@ -1,4 +1,4 @@
-// Remove "use client" as this is a server-side module, not a React component
+
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import { combineReducers } from "redux";
@@ -36,7 +36,6 @@ const createWebStorage = () => {
 // Use the custom storage engine
 const storage = createWebStorage();
 
-// Combine reducers with the original 'orders' key
 const rootReducer = combineReducers({
   user: userReducer,
   seller: sellerReducer,
@@ -44,11 +43,10 @@ const rootReducer = combineReducers({
   events: eventReducer,
   cart: cartReducer,
   wishlist: wishlistReducer,
-  orders: orderReducer, // Reverted to 'orders' to match original working state
+  orders: orderReducer, 
   withdraws: withdrawReducer,
 });
 
-// Persist config with better production settings
 const persistConfig = {
   key: "root",
   storage, // Use the custom storage
@@ -71,6 +69,12 @@ const store = configureStore({
     }),
 });
 
-// Export store and persistor
+
+// persistStore() - by default redux lose the state on page refresh, does three things:
+
+// Tracks changes in the Redux state
+// Saves state to persistent storage (e.g., localStorage for web)
+// Restores saved state when the app starts again
+
 export const persistor = persistStore(store);
 export default store;

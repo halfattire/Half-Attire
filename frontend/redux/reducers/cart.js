@@ -10,7 +10,7 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const item = action.payload;
-      const isItemExist = state.cart.find((i) => i._id === item._id);
+      const isItemExist = state.cart.find((i) => i._id === item._id); // here i is the pointer in the array that check each element of the array, We can change its name
       if (isItemExist) {
         state.cart = state.cart.map((i) =>
           i._id === isItemExist._id ? item : i

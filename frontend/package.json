@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:clean": "rimraf .next && next dev",
     "build": "next build",
+    "build:clean": "rimraf .next && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -49,7 +51,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20.17.30",
+    "@types/node": "^20.19.9",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "tailwindcss": "^4.1.4",
