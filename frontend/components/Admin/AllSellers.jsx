@@ -11,7 +11,7 @@ import axios from "axios";
 import { server } from "@/lib/server";
 import { toast } from "react-toastify";
 import { getAllSellers } from "../../redux/actions/seller";
-import Link from "next/link";
+import Link from "next/link"
 
 const AllSellers = () => {
   const dispatch = useDispatch();

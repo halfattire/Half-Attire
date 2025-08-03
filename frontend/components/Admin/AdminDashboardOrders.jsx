@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DataGrid } from "@mui/x-data-grid";
@@ -8,7 +7,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
 import Link from "next/link";
 import { getAllOrdersOfAdmin } from "@/redux/actions/order";
-import Loader from "../../components/Loader";
+import Loader from "../../components/Loader"
 
 const AdminDashboardOrders = () => {
   const dispatch = useDispatch();

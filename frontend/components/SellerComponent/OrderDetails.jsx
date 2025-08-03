@@ -6,10 +6,10 @@ import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { getAllOrdersOfShop } from "../../redux/actions/order"
-import { backend_url, server } from "../../lib/server"
-import axios from "axios"
-import { toast } from "react-toastify"
-import Image from "next/image"
+import { backend_url, server } from "../../lib/server"''
+import axios from "axios";
+import { toast } from "react-toastify";
+import Image from "next/image";
 
 function OrderDetails() {
   const { orders, isLoading } = useSelector((state) => state.orders)
